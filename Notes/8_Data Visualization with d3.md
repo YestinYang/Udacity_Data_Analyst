@@ -283,13 +283,46 @@ elem.style('background-color', '#757c81');
 ![d3_scale](/Users/yestinyang/Udacity_Data_Analyst/img/d3_scale.png)
 
 ```javascript
-// 1. Define Scale
+// Insert SVG element
+var svg = d3.select('.main').append('svg');
+svg.attr('width', 600).attr('height', 300);
 
+// 1. Define scale
+var y = d3.scale.linear().domain([15,90]).range([250,0]); // here return a function
+var x = d3.scale.log().domain([250,100000]).range([0,600]);
 
-
+// Test scale
+y(52.5);
+x(10000);
 ```
 
+#### 2. Define Radius
 
+> The radius of circle should use square root of data value, to keep the size of circle linearly correlated.
+>
+> ![d3_radius](../img/d3_radius.png)
+>
+> **PS:** Left one is exaggerated by using data value as radius
+
+```javascript
+// 2. Define radius of circle
+var r = d3.scale.sqrt().domain([52070,13800000000]).range([10,50]);
+```
+
+#### 3. Draw a Circle
+
+```javascript
+// 3. Draw a circle
+// Verify the properties of circle
+console.log(y(77), x(13330), r(1380000000));  // console.log = print in python
+
+// Append on SVG, whose attributes can be found on SVG develop website
+svg.append('circle').attr('fill', 'red').attr('r', r(1380000000)).attr('cx', x(13330)).attr('cy', y(77));
+```
+
+### Client-Server Model
+
+![d3_server](../img/d3_server.png)
 
 ## Dimple.js
 
