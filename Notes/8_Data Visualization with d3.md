@@ -253,7 +253,6 @@ document.querySelector('#main'); // ID selector with hash
 // Way 2: Run all source code into JS console
 // Way 3: Insert into head tag through JS, as below
 var script = document.createElement('script');
-script.type = 'text/javascript';
 script.src = "https://d3js.org/d3.v5.min.js";
 document.head.appendChild(script);
 ```
