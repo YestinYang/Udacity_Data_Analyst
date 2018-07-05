@@ -12,7 +12,9 @@ Notes:
 Notes:
 
 ```{r Pseudo-Facebook User Data}
-
+getwd()
+list.files()
+pf = read.csv('pseudo_facebook.tsv', sep = '\t')
 ```
 
 ***
@@ -21,8 +23,11 @@ Notes:
 Notes:
 
 ```{r Histogram of Users\' Birthdays}
-install.packages('ggplot2')
-library(ggplot2)
+# install.packages('ggplot2')
+# library(ggplot2)
+
+qplot(x = dob_day, data = pf) + 
+  scale_x_continuous(breaks=1:31)
 ```
 
 ***
@@ -61,7 +66,9 @@ Notes:
 Notes:
 
 ```{r Faceting}
-
+qplot(x = dob_day, data = pf) + 
+  scale_x_continuous(breaks = 1:31) + 
+  facet_grid(dob_month~gender)
 ```
 
 #### Let’s take another look at our plot. What stands out to you here?
@@ -87,7 +94,7 @@ Notes:
 #### What code would you enter to create a histogram of friend counts?
 
 ```{r Friend Count}
-
+qplot(x = friend_count, data = pf)
 ```
 
 #### How is this plot similar to Moira's first plot?
@@ -99,7 +106,12 @@ Response:
 Notes:
 
 ```{r Limiting the Axes}
+# solution 1
+qplot(x = friend_count, data = pf, xlim = c(0,1000))
 
+# sulution 2: using layers
+qplot(x = friend_count, data = pf) +
+  scale_x_continuous(limits = c(0,1000))
 ```
 
 ### Exploring with Bin Width
@@ -116,7 +128,8 @@ Notes:
 # Add it to the code below.
 qplot(x = friend_count, data = pf, binwidth = 10) +
   scale_x_continuous(limits = c(0, 1000),
-                     breaks = seq(0, 1000, 50))
+                     breaks = seq(0, 1000, 50)) + 
+  facet_grid(~gender)
 ```
 
 ***
@@ -125,7 +138,10 @@ qplot(x = friend_count, data = pf, binwidth = 10) +
 Notes:
 
 ```{r Omitting NA Values}
-
+qplot(x = friend_count, data = subset(pf, !is.na(gender)), binwidth = 10) +
+  scale_x_continuous(limits = c(0, 1000),
+                     breaks = seq(0, 1000, 50)) + 
+  facet_grid(~gender)
 ```
 
 ***
@@ -134,7 +150,7 @@ Notes:
 Notes:
 
 ```{r Statistics \'by\' Gender}
-
+by(pf$friend_count, pf$gender, summary)
 ```
 
 #### Who on average has more friends: men or women?
@@ -152,7 +168,8 @@ Response:
 Notes:
 
 ```{r Tenure}
-
+qplot(x = tenure, data = pf, binwidth = 30,
+      color = I('black'), fill = I('#099DD9'))
 ```
 
 ***
@@ -160,7 +177,8 @@ Notes:
 #### How would you create a histogram of tenure by year?
 
 ```{r Tenure Histogram by Year}
-
+qplot(x = tenure/365, data = pf, binwidth = 0.25,
+      color = I('black'), fill = I('#099DD9'))
 ```
 
 ***
@@ -169,7 +187,11 @@ Notes:
 Notes:
 
 ```{r Labeling Plots}
-
+qplot(x = tenure/365, data = pf, binwidth = 0.25,
+      color = I('black'), fill = I('#099DD9'),
+      ylab = 'Number of users in sample') + 
+  scale_x_continuous(breaks = 1:7, limits = c(0,7)) + 
+  xlab('Number of years using Facebook')
 ```
 
 ***
@@ -178,7 +200,8 @@ Notes:
 Notes:
 
 ```{r User Ages}
-
+qplot(x = age, data = pf, binwidth = 1) + 
+  scale_x_continuous(breaks = seq(0, max(pf$age), 10))
 ```
 
 #### What do you notice?
@@ -198,14 +221,23 @@ Notes:
 
 ### Transforming Data
 Notes:
+```{r}
+summary(pf$friend_count)
+summary(log10(pf$friend_count+1))
+summary(sqrt(pf$friend_count))
+```
 
 ***
 
 ### Add a Scaling Layer
-Notes:
+Notes: The reason we transforming the scale is that most of application or model assuming that the distribution is normal.
 
 ```{r Add a Scaling Layer}
+p1 = qplot(x = friend_count, data = pf)
+p2 = p1 + scale_x_log10()
+p3 = p1 + scale_x_sqrt()
 
+grid.arrange(p1,p2,p3, ncol=1)
 ```
 
 ***
@@ -214,7 +246,14 @@ Notes:
 ### Frequency Polygons
 
 ```{r Frequency Polygons}
-
+qplot(x = friend_count, y = ..count../sum(..count..), 
+      data = subset(pf, !is.na(gender)),
+      xlab = 'Friend Count',
+      ylab = 'Proportion of Users with that Friend Count',
+      binwidth = 10,
+      geom = 'freqpoly',
+      color = gender) + 
+  scale_x_continuous(limits = c(0,1000), breaks = seq(0,1000,100))
 ```
 
 ***
@@ -223,7 +262,7 @@ Notes:
 Notes:
 
 ```{r Likes on the Web}
-
+by(pf$www_likes, pf$gender, sum)
 ```
 
 
@@ -233,13 +272,23 @@ Notes:
 Notes:
 
 ```{r Box Plots}
-
+qplot(x = gender, y = friend_count,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot')
 ```
 
 #### Adjust the code to focus on users who have friend counts between 0 and 1000.
 
 ```{r}
+qplot(x = gender, y = friend_count,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot',
+      ylim = c(0,1000)) # removing data points, which affects the result of boxplot
 
+qplot(x = gender, y = friend_count,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot') + 
+  coord_cartesian(ylim = c(0,1000))
 ```
 
 ***
@@ -248,7 +297,12 @@ Notes:
 Notes:
 
 ```{r Box Plots, Quartiles, and Friendships}
+qplot(x = gender, y = friend_count,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot') + 
+  coord_cartesian(ylim = c(0,250))
 
+by(pf$friend_count, pf$gender, summary)
 ```
 
 #### On average, who initiated more friendships in our sample: men or women?
@@ -256,7 +310,12 @@ Response:
 #### Write about some ways that you can verify your answer.
 Response:
 ```{r Friend Requests by Gender}
+qplot(x = gender, y = friendships_initiated,
+      data = subset(pf, !is.na(gender)),
+      geom = 'boxplot') + 
+  coord_cartesian(ylim = c(0,250))
 
+by(pf$friendships_initiated, pf$gender, summary)
 ```
 
 Response:
@@ -267,7 +326,16 @@ Response:
 Notes:
 
 ```{r Getting Logical}
+summary(pf$mobile_likes)
 
+summary(pf$mobile_likes > 0)
+
+mobile_check_in = NA
+pf$mobile_check_in = ifelse(pf$mobile_likes > 0, 1, 0)
+pf$mobile_check_in = factor(pf$mobile_check_in)
+summary(pf$mobile_check_in)
+
+sum(pf$mobile_check_in == 1)/length(pf$mobile_check_in)
 ```
 
 Response:
