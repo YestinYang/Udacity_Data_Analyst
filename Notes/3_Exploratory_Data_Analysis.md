@@ -313,7 +313,45 @@ PS: [Subsetting](https://www.statmethods.net/management/subset.html)
 
   - ![R_bias_variance](/Users/yestinyang/Udacity_Data_Analyst/img/R_bias_variance.png)
 
+#### Three Variable
 
+- Devide by color
+
+  - ```R
+    ggplot(aes(x = age, y = median_friend_count), data = pf.fc_by_age_gender) +
+      geom_line(aes(color = gender))
+    ```
+
+  - ![R_3rd_variable](/Users/yestinyang/Udacity_Data_Analyst/img/R_3rd_variable.png)
+
+- Reshape and unpivot
+
+  - ```R
+    library(reshape2)
+    
+    pf.fc_by_age_gender.wide = dcast(pf.fc_by_age_gender,
+                                     age ~ gender, # keep age and split gender from one column to female and male column
+                                     value.var = 'median_friend_count') # use median as value in female and male column
+    ```
+
+- Cut / Bucket discrete variable
+
+  - ```R
+    pf$year_joined.bucket = cut(pf$year_joined,
+                                c(2004,2009,2011,2012,2014)) # only need to state the beginning year of each bucket
+    ```
+
+- Smooth noisy plot (have to consider bias-variance trade-off on visualization)
+
+  - ```R
+    ggplot(aes(x = tenure, y = friendships_initiated / tenure),
+           data = subset(pf, tenure > 0)) +
+      geom_smooth(aes(color = year_joined.bucket))
+    ```
+
+  - ![R_smooth](/Users/yestinyang/Udacity_Data_Analyst/img/R_smooth.png)
+
+- 
 
 ----
 
