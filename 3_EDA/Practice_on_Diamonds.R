@@ -46,4 +46,42 @@ with(dm, cor.test(z, price, method = 'pearson'))
 ggplot(aes(x = depth, y = price), data = dm) + 
   geom_point(alpha = 1/100) +
   scale_x_continuous(breaks = seq(50,70,2))
-  
+
+with(dm, cor.test(depth, price))  
+
+ggplot(aes(x = carat, y = price), data = dm) + 
+  geom_point() + 
+  xlim(0, quantile(dm$carat, 0.99)) + 
+  ylim(0, quantile(dm$price, 0.99))
+
+dm$volume = dm$x * dm$y *dm$z
+
+ggplot(aes(x = volume, y = price), data = dm) + 
+  geom_point() + 
+  xlim(0,750)
+
+with(dm[(dm$volume > 0) & (dm$volume < 800),], cor.test(x = volume, y = price))
+
+ggplot(aes(x = volume, y = price), data = dm[(dm$volume > 0) & (dm$volume < 800),]) + 
+  geom_point(alpha = 1/100) + 
+  geom_smooth(method = 'lm')
+
+diamondsByClarity = dm %>%
+  group_by(clarity) %>%
+  summarise(mean_price = mean(price),
+            median_price = median(price),
+            min_price = min(price),
+            max_price = max(price),
+            n = n())
+
+diamonds_by_clarity <- group_by(diamonds, clarity)
+diamonds_mp_by_clarity <- summarise(diamonds_by_clarity, mean_price = mean(price))
+
+diamonds_by_color <- group_by(diamonds, color)
+diamonds_mp_by_color <- summarise(diamonds_by_color, mean_price = mean(price))
+
+p1 = ggplot(aes(x = color, y = mean_price), data = diamonds_mp_by_color) + 
+  geom_bar(stat = 'identity')
+p2 = ggplot(aes(x = clarity, y = mean_price), data = diamonds_mp_by_clarity) + 
+  geom_bar(stat = 'identity')
+grid.arrange(p1,p2)
