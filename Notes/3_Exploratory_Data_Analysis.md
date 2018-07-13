@@ -351,6 +351,29 @@ PS: [Subsetting](https://www.statmethods.net/management/subset.html)
 
   - ![R_smooth](/Users/yestinyang/Udacity_Data_Analyst/img/R_smooth.png)
 
+- Plot matrix for variable without pre-existing interest or knowledge
+
+  - ```R
+    library(GGally)
+    
+    ggpairs(pf_subset[sample.int(nrow(pf_subset),1000),])
+    ```
+
+  - ![R_plot_matrix](/Users/yestinyang/Udacity_Data_Analyst/img/R_plot_matrix.png)
+
+- Heatmap for abnormal point
+
+  - ```R
+    # for massive observation and features case
+    # like A/B testing, each group has different metrics on Y and observations on X
+    ggplot(aes(y = gene, x = case, fill = value),
+      data = nci.long.samp) +
+      geom_tile() +
+      scale_fill_gradientn(colours = colorRampPalette(c("blue", "red"))(100))
+    ```
+
+  - ![R_heatmap](/Users/yestinyang/Udacity_Data_Analyst/img/R_heatmap.png)
+
 - 
 
 ----
