@@ -274,7 +274,7 @@ Notes:
 Notes:
 
 ```{r}
-nci <- read.table("nci.tsv")
+nci <- read.table("./lesson5/nci.tsv")
 colnames(nci) <- c(1:64)
 ```
 
