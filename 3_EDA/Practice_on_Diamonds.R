@@ -85,3 +85,25 @@ p1 = ggplot(aes(x = color, y = mean_price), data = diamonds_mp_by_color) +
 p2 = ggplot(aes(x = clarity, y = mean_price), data = diamonds_mp_by_clarity) + 
   geom_bar(stat = 'identity')
 grid.arrange(p1,p2)
+
+
+## Multi variable EDA
+
+ggplot(aes(x = log(price), fill = cut), data = dm) + 
+  geom_histogram() +
+  scale_fill_brewer(type = 'qual') + 
+  facet_wrap(~color)
+
+ggplot(data = dm, aes(x = table, y = price, color = cut)) + 
+  geom_point() + 
+  scale_color_brewer(type = 'qual')
+
+ggplot(data = dm, aes(x = x*y*z, y = log(price), color = clarity)) + 
+  xlim(0, quantile(dm$x * dm$y * dm$z, 0.99)) + 
+  geom_point() + 
+  scale_color_brewer(type = 'div')
+
+ggplot(aes(x = cut, y = price/carat, color = color), data = dm) + 
+  facet_wrap(~clarity) +
+  geom_jitter() +
+  scale_color_brewer(type = 'div')
