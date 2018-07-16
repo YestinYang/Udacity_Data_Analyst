@@ -9,7 +9,12 @@ Notes:
 ### Scatterplot Review
 
 ```{r Scatterplot Review}
+dm = diamonds
 
+ggplot(aes(x = carat, y = price), data = dm) + 
+  geom_point() + 
+  xlim(0, quantile(dm$carat,0.99)) + 
+  ylim(0, quantile(dm$price,0.99))
 ```
 
 ***
@@ -67,7 +72,13 @@ Response:
 Notes:
 
 ```{r The Demand of Diamonds}
+plot1 <- qplot(x = price, data = dm, binwidth = 100) + 
+  ggtitle('Price')
 
+plot2 <- qplot(x = log10(price), data = dm, binwidth = 0.01) +
+  ggtitle('Price (log10)')
+
+grid.arrange(plot1,plot2,ncol = 2)
 ```
 
 ***
@@ -80,7 +91,9 @@ Notes:
 ### Scatterplot Transformation
 
 ```{r Scatterplot Transformation}
-
+qplot(carat, price, data = dm) + 
+  scale_y_continuous(trans = log10_trans()) + 
+  ggtitle('Price (log10) by Carat')
 ```
 
 
