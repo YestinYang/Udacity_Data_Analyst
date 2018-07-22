@@ -14,7 +14,8 @@ library(ggplot2)
 
 ```{r echo=FALSE, Load_the_Data}
 # 加载数据
-
+rw <- read.csv('./project/wineQualityReds.csv', sep = ',')
+rw <- rw[-1]  # remove index column
 ```
 
 # 单变量绘图选择
