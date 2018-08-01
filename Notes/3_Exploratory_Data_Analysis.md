@@ -1,5 +1,7 @@
 # Udacity Data Analyst Nano Degree
 
+[TOC]
+
 ## Part 3: Exploratory Data Analysis
 
 > Keep curious and skeptical about data, test and develop intuitions of data

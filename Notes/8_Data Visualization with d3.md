@@ -40,9 +40,11 @@ Even descriptive results of datasets are same, their patterna can be extremely d
 4. Angle & Slope (tie) e.g. [pie chart](http://flowingdata.com/2008/06/09/what-do-you-use-to-analyze-andor-visualize-data-poll-results/)
 5. Area e.g. [bubbles](http://flowingdata.com/2007/10/02/americans-prefer-watered-down-beer/)
 6. Volume, density, and color saturation (tie) e.g. [heatmap](http://flowingdata.com/2010/01/21/how-to-make-a-heatmap-a-quick-and-easy-solution/)
-7. Color hue e.g. [newsmap](http://newsmap.jp/)
+7. Color hue e.g. [newsmap](http://newsmap.jp/) 
 
 [Reference](http://flowingdata.com/2010/03/20/graphical-perception-learn-the-fundamentals-first/) 
+
+![d3_encoding_rank](/Users/yestinyang/Udacity_Data_Analyst/img/d3_encoding_rank.png)
 
 ### Visualization Techniques
 
