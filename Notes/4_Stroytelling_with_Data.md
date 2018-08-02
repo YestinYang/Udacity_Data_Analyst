@@ -2,7 +2,7 @@
 
 [TOC]
 
-## Part 4: Storytelling of Data
+## Part 4: Storytelling with Data
 
 ### Fundamental Data Visualization
 
@@ -25,15 +25,15 @@
 - **Violin plot:** need more data, but easy to detect normality
   - Kernel density estimation
 - **纸带记录图:** can only show small amount of data
-  - ![tableau_纸带记录图](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_纸带记录图.png)
+  - ![tableau_纸带记录图](../img/tableau_纸带记录图.png)
 - **Bullet graph:** 
-  - ![image-20180802141825559](/var/folders/5q/93z8tcmn0xn8t6gr3gzzssz40000gn/T/abnerworks.Typora/image-20180802141825559.png)
+  - ![tableau_bullet](../img/tableau_bullet.png)
 - **Sparklines:** 
-  - ![tableau_sparklines](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_sparklines.png)
+  - ![tableau_sparklines](../img/tableau_sparklines.png)
 - **Linked scatter plot:** add in ordinal 3rd dimension into scatter plot, like date
-  - ![tableau_linked_scatter](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_linked_scatter.png)
+  - ![tableau_linked_scatter](../img/tableau_linked_scatter.png)
 - **[Cycle Plots](https://www.perceptualedge.com/articles/guests/intro_to_cycle_plots.pdf):** 
-  - ![tableau_cycle](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_cycle.png)
+  - ![tableau_cycle](../img/tableau_cycle.png)
 
 #### Choose Colormap
 
@@ -44,25 +44,25 @@
 - Brightness change is non-linear
 - Yellow and blue-green region has higher brightness
 
-- ![tableau_jet](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_jet.png)
+- ![tableau_jet](../img/tableau_jet.png)
 
 **Linear colormap:** 
 
 - Continuous hue: for continuous data with all positive values
-  - ![tableau_continuous_hue](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_continuous_hue.png)
+  - ![tableau_continuous_hue](../img/tableau_continuous_hue.png)
 - Divergent hue: for continuous data with both negative and positive values
-  - ![tableau_divergent_hue](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_divergent_hue.png)
+  - ![tableau_divergent_hue](../img/tableau_divergent_hue.png)
 - Qualitative hue: for categorical data
   - Generation tool: [i want hue](http://tools.medialab.sciences-po.fr/iwanthue/) 
 
 #### Other Encodings
 
 - Size
-  - ![tableau_size](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_size.png)
+  - ![tableau_size](../img/tableau_size.png)
 
 - Shape: 
 - Double Encodings
-  - ![tableau_double_encode](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_double_encode.png)
+  - ![tableau_double_encode](../img/tableau_double_encode.png)
 
 #### Less is More
 
@@ -70,9 +70,9 @@
 
 For example, border of bar and chart, scale axis.
 
-![tableau_ink_1](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_ink_1.png)
+![tableau_ink_1](../img/tableau_ink_1.png)
 
-![tableau_ink_2](/Users/yestinyang/Udacity_Data_Analyst/img/tableau_ink_2.png)
+![tableau_ink_2](../img/tableau_ink_2.png)
 
 #### Honest Design
 
