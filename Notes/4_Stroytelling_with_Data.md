@@ -88,8 +88,20 @@ $Lie Factor = \frac{size\ of\ effect\ shown\ in\ graphic}{size\ of\ effect\ in\ 
 
 [Multifaceted Data and Story](http://www.storytellingwithdata.com/blog/2014/01/multifaceted-data-and-story) 
 
-
 ### Visualization with Tableau
+
+1. Connect data
+2. Join sheets / tables
+3. Draw in worksheet: blue for discrete features while green for continuous
+4. Measures and granularity
+5. Show Me function: multi-select then choose proper chart
+6. Hierarchy:
+   - **datetime value:** automatically treated as hierarchy, while discrete type and continuous type are showing differently
+   - **customized:** drag one feature into the other, and merge into a new group
+7. Marks
+8. Facet charts
+9. Dual axis: drag 2nd measures to right y-axis
+10. Filters
 
 ### Storytelling with Tableau
 
