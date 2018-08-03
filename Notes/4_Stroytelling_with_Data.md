@@ -102,6 +102,10 @@ $Lie Factor = \frac{size\ of\ effect\ shown\ in\ graphic}{size\ of\ effect\ in\ 
 8. Facet charts
 9. Dual axis: drag 2nd measures to right y-axis
 10. Filters
+11. Group and set: 
+    - **group:** a subset of a feature stated in a new feature, like low quantity county (static)
+    - **set:** a subset of whole dataset meeting some criteria (dynamic)
+12. Calculation field and table calculation: one creates a new value, while the other transform current chart
 
 ### Storytelling with Tableau
 
