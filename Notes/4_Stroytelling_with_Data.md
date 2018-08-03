@@ -109,3 +109,7 @@ $Lie Factor = \frac{size\ of\ effect\ shown\ in\ graphic}{size\ of\ effect\ in\ 
 
 ### Storytelling with Tableau
 
+1. Create charts in worksheet 
+2. Create a dashboard and drag charts into it from worksheet
+3. Create story to arrange your charts or dashboard in a sequence 
+
