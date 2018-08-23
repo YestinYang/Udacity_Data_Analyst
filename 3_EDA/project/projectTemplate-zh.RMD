@@ -1,4 +1,4 @@
-TITLE by YOUR_NAME_HERE
+红酒质量探索 by 杨粤
 ========================================================
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
@@ -16,18 +16,133 @@ library(ggplot2)
 # 加载数据
 rw <- read.csv('./project/wineQualityReds.csv', sep = ',')
 rw <- rw[-1]  # remove index column
+
+print('Counts of duplicated records')
+table(duplicated(rw))
+
+rw <- rw[!duplicated(rw),]
 ```
+
+本报告探索了红酒质量数据集。数据集包含了1599条红酒样本记录，及其11个特征和1个品质评级信息。对数据集中240条重复记录做了移除处理（原因见“单变量分析”部分）。
 
 # 单变量绘图选择
 ```{r echo=FALSE, Univariate_Plots}
+dim(rw)
+str(rw)
+summary(rw)
 
+rw$quality <- as.factor(rw$quality)
+ggplot(aes(x = quality), data = rw) + 
+  geom_histogram(stat="count")
 ```
+
+从红酒品质评级的直方图来看，大部分红酒的评级处于中等水平。虽然评级的分值设定为0-10，但就本数据集来说，红酒的评级处于3-8的范围内，并没有出现极差或极好的红酒。
+
+```{r echo=FALSE, Univariate_Plots}
+library(gridExtra)
+
+p1 = ggplot(aes(x = fixed.acidity), data = rw) + 
+  geom_histogram(binwidth = 0.2)
+
+p2 = ggplot(aes(x = volatile.acidity), data = rw) + 
+  geom_histogram(binwidth = 0.02)
+
+p3 = ggplot(aes(x = citric.acid), data = rw) + 
+  geom_histogram(binwidth = 0.01)
+
+grid.arrange(p1,p2,p3,ncol=1)
+
+print('Counts of wines with zero citric acid')
+table(rw[rw$citric.acid==0,"citric.acid"])
+```
+
+从红酒的三种酸性指标直方图来看，每种酸都展现了长尾分布。其中固定酸在$7\text{~}8g/dm^3$左右出现峰值，并逐步下降延伸至$16g/dm^3$。挥发性酸在$0.4\text{~}0.6g/dm^3$范围内出现了三个波峰，而挥发性酸大于$0.8g/dm^3$的红酒数量很少，原因可能与口感有关：越多的挥发性酸会增加红酒的醋味，劣化口感。
+
+绝大部分红酒都含有小于$0.5g/dm^3$的柠檬酸，甚至有118种红酒（8.7%）完全不含有柠檬酸。根据维基百科"Acids in wine" 条目的介绍，柠檬酸只存在于极少数酿酒所用的葡萄中，这解释了红酒中的柠檬酸含量较低甚至没有的原因。
+
+```{r echo=FALSE, Univariate_Plots}
+p1 = ggplot(aes(x = residual.sugar), data = rw) + 
+  geom_histogram(binwidth = 0.2)
+
+p2 = ggplot(aes(x = chlorides), data = rw) + 
+  geom_histogram(binwidth = 0.01)
+
+grid.arrange(p1,p2,ncol=1)
+```
+
+样本中大部分红酒的糖含量在$2g/dm^3$左右，而糖含量大于$4g/dm^3$的红酒较少，且没有出现超过$45g/dm^3$的甜酒。大部分红酒的盐含量在$0.08g/dm^3$左右。糖和盐的分布均呈向右长尾的钟型分布。我们再去掉长尾，放大钟型部分看一看。
+
+```{r echo=FALSE, Univariate_Plots}
+p1 = ggplot(aes(x = residual.sugar), data = rw) + 
+  geom_histogram(binwidth = 0.05) +
+  xlim(c(0,4))
+
+p2 = ggplot(aes(x = chlorides), data = rw) + 
+  geom_histogram(binwidth = 0.001) +
+  xlim(c(0,0.15))
+
+grid.arrange(p1,p2,ncol=1)
+
+print('Value counts of sugar attribute')
+table(rw$residual.sugar)
+```
+
+明显看出红酒的糖含量以$0.05g/dm^3$为最小间隔，类似离散数据的直方图，这可能与测量的精度有关。
+
+```{r echo=FALSE, Univariate_Plots}
+p1 = ggplot(aes(x = free.sulfur.dioxide), data = rw) + 
+  geom_histogram(binwidth = 1)
+
+p2 = ggplot(aes(x = total.sulfur.dioxide), data = rw) + 
+  geom_histogram(binwidth = 3)
+
+p3 = ggplot(aes(x = sulphates), data = rw) + 
+  geom_histogram(binwidth = 0.02)
+
+grid.arrange(p1,p2,p3,ncol=1)
+```
+
+样本中大部分红酒含有的游离二氧化硫和总二氧化硫的量都在较低的水平聚集，并且两者的分布信息（直方图）有非常近似的形态，从而猜测游离二氧化硫应该在总二氧化硫中占有较为固定的比例，也即两者具有某种相关性。对于硫酸盐添加剂来说，由于其为人工添加（独立变量），故其分布呈现右长尾的钟型分布。
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(x = density), data = rw) + 
+  geom_histogram(binwidth = 0.0005)
+```
+
+绝大部分红酒的密度都稍低于水的密度，仅有极少部分红酒的密度大于水。根据数据集的描述，酒精比例和糖含量对密度有直接影响，后续将考察这三者的相互关系。
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(x = pH), data = rw) + 
+  geom_histogram(binwidth = 0.02)
+
+print('Summary of pH attribute')
+summary(rw$pH)
+```
+
+所有红酒（除2款红酒外）的pH值都小于4，75%的红酒处于3.2~3.4的区间内。
+
+```{r echo=FALSE, Univariate_Plots}
+ggplot(aes(x = alcohol), data = rw) + 
+  geom_histogram(binwidth = 0.2)
+
+print('Summary of alcohol attribute')
+summary(rw$alcohol)
+
+print('Maximum of alcohol')
+max(rw$alcohol)
+```
+
+红酒的度数（体积比例）呈右偏斜分布，约75%的红酒低于11度，最高度的红酒为14.9度。
 
 # 单变量分析
 
 ### 你的数据集结构是什么？
 
+数据集中有1599条红酒样本记录，及其11个连续变量（固定酸、挥发性酸、柠檬酸、糖、盐、游离二氧化硫、总二氧化硫、密度、酸碱值、硫酸盐、酒精含量）和1个离散变量--品质评级（0-非常差，到10-非常好）。在探索后发现，数据集中有240条完全一样的记录，考虑到红酒这一标的物很难在11个连续变量上具有完全一致的数值，为了确保EDA的准确性，该部分数据在探索前已经移除。
+
 ### 你的数据集内感兴趣的主要特性有哪些？
+
+
 
 ### 你认为数据集内哪些其他特征可以帮助你探索兴趣特点？
 
