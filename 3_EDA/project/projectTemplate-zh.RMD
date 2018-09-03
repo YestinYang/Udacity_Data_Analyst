@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 红酒质量探索 by 杨粤
 ========================================================
 
@@ -16,7 +21,10 @@ library(GGally)
 
 ```{r echo=FALSE, Load_the_Data}
 # 加载数据
-rw <- read.csv('./project/wineQualityReds.csv', sep = ',')
+setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
+
+rw <- read.csv("wineQualityReds.csv", sep = ',')
+
 rw <- rw[-1]  # remove index column
 
 print('Counts of duplicated records')
@@ -28,7 +36,7 @@ rw <- rw[!duplicated(rw),]
 本报告探索了红酒质量数据集。数据集包含了1599条红酒样本记录，及其11个特征和1个品质评级信息。对数据集中240条重复记录做了移除处理（原因见“单变量分析”部分）。
 
 # 单变量绘图选择
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_quality}
 dim(rw)
 str(rw)
 summary(rw)
@@ -40,7 +48,7 @@ ggplot(aes(x = quality), data = rw) +
 
 从红酒品质评级的直方图来看，大部分红酒的评级处于中等水平。虽然评级的分值设定为0-10，但就本数据集来说，红酒的评级处于3-8的范围内，并没有出现极差或极好的红酒。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_acid}
 p1 = ggplot(aes(x = fixed.acidity), data = rw) + 
   geom_histogram(binwidth = 0.2)
 
@@ -60,7 +68,7 @@ table(rw[rw$citric.acid==0,"citric.acid"])
 
 绝大部分红酒都含有小于$0.5g/dm^3$的柠檬酸，甚至有118种红酒（8.7%）完全不含有柠檬酸。根据维基百科"Acids in wine" 条目的介绍，柠檬酸只存在于极少数酿酒所用的葡萄中，这解释了红酒中的柠檬酸含量较低甚至没有的原因。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_sugar_salt}
 p1 = ggplot(aes(x = residual.sugar), data = rw) + 
   geom_histogram(binwidth = 0.2)
 
@@ -72,7 +80,7 @@ grid.arrange(p1,p2,ncol=1)
 
 样本中大部分红酒的糖含量在$2g/dm^3$左右，而糖含量大于$4g/dm^3$的红酒较少，且没有出现超过$45g/dm^3$的甜酒。大部分红酒的盐含量在$0.08g/dm^3$左右。糖和盐的分布均呈向右长尾的钟型分布。我们再去掉长尾，放大钟型部分看一看。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_sugar_salt_zoom}
 p1 = ggplot(aes(x = residual.sugar), data = rw) + 
   geom_histogram(binwidth = 0.05) +
   xlim(c(0,4))
@@ -89,7 +97,7 @@ table(rw$residual.sugar)
 
 明显看出红酒的糖含量以$0.05g/dm^3$为最小间隔，类似离散数据的直方图，这可能与测量的精度有关。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_sulfur}
 p1 = ggplot(aes(x = free.sulfur.dioxide), data = rw) + 
   geom_histogram(binwidth = 1)
 
@@ -104,14 +112,14 @@ grid.arrange(p1,p2,p3,ncol=1)
 
 样本中大部分红酒含有的游离二氧化硫和总二氧化硫的量都在较低的水平聚集，并且两者的分布信息（直方图）有非常近似的形态，从而猜测游离二氧化硫应该在总二氧化硫中占有较为固定的比例，也即两者具有某种相关性。对于硫酸盐添加剂来说，由于其为人工添加（独立变量），故其分布呈现右长尾的钟型分布。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_density}
 ggplot(aes(x = density), data = rw) + 
   geom_histogram(binwidth = 0.0005)
 ```
 
 绝大部分红酒的密度都稍低于水的密度，仅有极少部分红酒的密度大于水。根据数据集的描述，酒精比例和糖含量对密度有直接影响，后续将考察这三者的相互关系。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_pH}
 ggplot(aes(x = pH), data = rw) + 
   geom_histogram(binwidth = 0.02)
 
@@ -121,7 +129,7 @@ summary(rw$pH)
 
 所有红酒（除2款红酒外）的pH值都小于4，75%的红酒处于3.2~3.4的区间内。
 
-```{r echo=FALSE, Univariate_Plots}
+```{r echo=FALSE, Univariate_Plots_alcohol}
 ggplot(aes(x = alcohol), data = rw) + 
   geom_histogram(binwidth = 0.2)
 
@@ -160,9 +168,116 @@ max(rw$alcohol)
 在探索后发现，数据集中有240条完全一样的记录，考虑到红酒这一标的物很难在11个连续变量上具有完全一致的数值，为了确保EDA的准确性（避免重复不真实数据影响分布和回归模型的结果），该部分数据在探索前已经移除。
 
 # 双变量绘图选择
-```{r echo=FALSE, Bivariate_Plots}
+```{r echo=FALSE, Bivariate_Plots_matrix}
 ggpairs(rw)
 ```
+
+从相关度矩阵中最后一列的箱形图可以看出，挥发性酸与红酒的品质评级呈负相关关系，而柠檬酸、硫酸盐添加剂和酒精浓度与品质评级呈正相关关系。其他因素对于红酒的品质评级没有明显的趋势性影响。
+
+对于在单变量探索中发现的问题，我们逐个讨论：
+
+1. 红酒中游离二氧化硫和总二氧化硫是否存在某些关联度？-- 相关系数0.667，显示出较明显的线性关系。
+
+```{r echo=FALSE, Bivariate_Plots_sulfur}
+ggplot(aes(x = free.sulfur.dioxide, y=total.sulfur.dioxide), data = rw) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', color = 'red')
+```
+
+```{r echo=FALSE, Bivariate_Plots_sulfur_lm}
+print('Linear model of free and total sulfur dioxide, with corresponding significance test')
+
+lm.sulfur <- lm(rw$total.sulfur.dioxide~rw$free.sulfur.dioxide)
+summary(lm.sulfur)
+```
+
+进一步从散点图和线性回归的结果来看，R-squared为0.44，且t-test的p值远小于0.05，故基本可以得出结论：除固定部分外（截距12.91），游离二氧化硫占总二氧化硫其余部分的约一半的比例（权重为2.13）。
+
+2. 酒精比例和糖含量对红酒密度有什么样的影响？
+
+根据相关度矩阵中的结果，结合单变量中的猜测，与密度最为相关的是固定酸含量（相关系数0.67），而原本猜测中的酒精浓度也与密度关联较大（相关系数-0.505）。但糖、柠檬酸、pH值（中间变量/因变量，受其他自变量的影响，如固定酸和柠檬酸）与密度相关性较低（相关系数绝对值在0.32～0.35左右）。
+
+```{r echo=FALSE, Bivariate_Plots_acid_density}
+ggplot(aes(x = fixed.acidity, y=density), data = rw) + 
+  geom_point() + 
+  geom_smooth(method = 'lm', color = 'red')
+```
+
+```{r echo=FALSE, Bivariate_Plots_acid_density_lm}
+print('Linear model of fixed.acidity and density, with corresponding significance test')
+
+lm.acid.density <- lm(rw$density~rw$fixed.acidity)
+summary(lm.acid.density)
+```
+
+进一步从散点图和线性回归结果验证固定酸与密度间的关系，R-squared为0.45，t-test远小于0.5，可以确定两者线性相关。
+
+```{r echo=FALSE, Bivariate_Plots_alcohol_density}
+ggplot(aes(x = alcohol, y=density), data = rw) + 
+  geom_point() + 
+  geom_smooth(method = 'glm', color = 'red')
+```
+
+```{r echo=FALSE, Bivariate_Plots_alcohol_density_lm}
+print('Linear model of alcohol and density, with corresponding significance test')
+
+lm.alch.density <- lm(rw$density~rw$alcohol)
+summary(lm.alch.density)
+```
+
+从酒精浓度和密度的散点图来看，相较于固定酸含量与密度的关系，其围绕一次线性拟合线的扩散程度较高，故其相关系数较低。而当酒精浓度大于12%后，密度基本低于拟合线水平，显示出线性拟合对于此部分数据解释性较弱。这种较弱的解释性也反映在线性回归的结果中，R-squared只有0.26。
+
+3. 什么因素或因素组合会影响红酒的酸碱值？
+
+从相关度矩阵种可以得出，固定酸含量与pH的相关度最大（相关系数-0.687，含量越高，pH越小），其次是柠檬酸（相关系数-0.55）。而其他诸如硫酸盐添加剂、酒精浓度与pH的关联较小（相关系数绝对值在0.21左右）。
+
+```{r echo=FALSE, Bivariate_Plots_acid_pH}
+ggplot(aes(x = fixed.acidity, y=pH), data = rw) + 
+  geom_point() + 
+  geom_smooth(method = 'glm', color = 'red')
+```
+
+```{r echo=FALSE, Bivariate_Plots_acid_pH_lm}
+print('Linear model of fixed.acidity and pH, with corresponding significance test')
+
+lm.acid.ph <- lm(rw$pH~rw$fixed.acidity)
+summary(lm.acid.ph)
+```
+
+固定酸与pH值之间的散点图和线性回归结果（R-squared为0.47，t-test远小于0.5）可以看出两者有较明显线性关系。
+
+```{r echo=FALSE, Bivariate_Plots_citric_pH}
+ggplot(aes(x = citric.acid, y=pH), data = rw) + 
+  geom_point() + 
+  geom_smooth(method = 'glm', color = 'red')
+```
+
+```{r echo=FALSE, Bivariate_Plots_citric_pH_lm}
+print('Linear model of citric.acid and pH, with corresponding significance test')
+
+lm.citric.ph <- lm(rw$pH~rw$citric.acid)
+summary(lm.citric.ph)
+```
+
+相对于固定酸与pH值之间的关系，柠檬酸与pH值的一次线性关系较弱，R-squared仅有0.3。其中较为明显的是118种不含柠檬酸的样本聚集在0处，影响了线性回归的可解释性。当去除这些不含柠檬酸的样本后，R-sqaured降至0.26，再次显示了一次线性回归不能很好的解释柠檬酸与pH值间的关系。
+
+```{r echo=FALSE, Bivariate_Plots_citric_pH_lm_no_0}
+print('Linear model of citric.acidity and pH for samples with citric acid, and its corresponding significance test')
+
+rw.with.citric <- rw[rw$citric.acid!=0,]
+lm.citric.ph.with.acid <- lm(rw.with.citric$pH~rw.with.citric$citric.acid)
+summary(lm.citric.ph.with.acid)
+```
+
+4. 什么因素或因素间的组合会影响红酒的评分等级？
+
+本部分仅讨论什么因素会影响红酒评分，而对于因素的组合将放在多变量分析中讨论。
+
+如本部分开头所述，相关度矩阵中最后一列的箱形图展示出挥发性酸与红酒的品质评级呈负相关关系，而柠檬酸、硫酸盐添加剂和酒精浓度与品质评级呈正相关关系。其他因素对于红酒的品质评级没有明显的趋势性影响。
+
+为验证上述观察，对每一个变量进行ANOVA分析，其自变量为红酒品质评级（quality），因变量为除quality外的其他因素。
+
+
 
 # 双变量分析
 
@@ -176,6 +291,8 @@ ggpairs(rw)
 
 
 # 多变量绘图选择
+
+（使用逐步回归）
 
 ```{r echo=FALSE, Multivariate_Plots}
 
