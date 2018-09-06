@@ -15,8 +15,10 @@ output:
 # 应当在文件中，对所有代码块设为 echo=FALSE 。
 
 library(ggplot2)
+library(gplots)
 library(gridExtra)
 library(GGally)
+library(randomForest)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
@@ -210,7 +212,7 @@ lm.acid.density <- lm(rw$density~rw$fixed.acidity)
 summary(lm.acid.density)
 ```
 
-进一步从散点图和线性回归结果验证固定酸与密度间的关系，R-squared为0.45，t-test远小于0.5，可以确定两者线性相关。
+进一步从散点图和线性回归结果验证固定酸与密度间的关系，R-squared为0.45，t-test远小于0.05，可以确定两者线性相关。
 
 ```{r echo=FALSE, Bivariate_Plots_alcohol_density}
 ggplot(aes(x = alcohol, y=density), data = rw) + 
@@ -244,7 +246,7 @@ lm.acid.ph <- lm(rw$pH~rw$fixed.acidity)
 summary(lm.acid.ph)
 ```
 
-固定酸与pH值之间的散点图和线性回归结果（R-squared为0.47，t-test远小于0.5）可以看出两者有较明显线性关系。
+固定酸与pH值之间的散点图和线性回归结果（R-squared为0.47，t-test远小于0.05）可以看出两者有较明显线性关系。
 
 ```{r echo=FALSE, Bivariate_Plots_citric_pH}
 ggplot(aes(x = citric.acid, y=pH), data = rw) + 
@@ -275,28 +277,139 @@ summary(lm.citric.ph.with.acid)
 
 如本部分开头所述，相关度矩阵中最后一列的箱形图展示出挥发性酸与红酒的品质评级呈负相关关系，而柠檬酸、硫酸盐添加剂和酒精浓度与品质评级呈正相关关系。其他因素对于红酒的品质评级没有明显的趋势性影响。
 
-为验证上述观察，对每一个变量进行ANOVA分析，其自变量为红酒品质评级（quality），因变量为除quality外的其他因素。
+为验证上述观察，对挥发性酸、柠檬酸、硫酸盐、酒精浓度与红酒品质评级进行ANOVA分析，其中自变量为红酒品质评级（quality），因变量为前四项。
 
+```{r echo=FALSE, Bivariate_Plots_volatile_quality}
+ggplot(aes(x = quality, y=volatile.acidity), data = rw) + 
+  geom_boxplot()
+```
 
+```{r echo=FALSE, warning=FALSE, Bivariate_Plots_volatile_quality_ANOVA}
+print('ANOVA for volatile.acidity and quality, and 95% CI plot')
+summary(aov(volatile.acidity ~ quality, data = rw))
+plotmeans(volatile.acidity ~ quality, data = rw, main = "Mean Plot with 95% CI")
+```
+
+从箱形图可以看出，评级越高的红酒，其挥发性酸的含量越低。而ANOVA结果中的p-value远低于0.05，显示不同的红酒评级具有不同的挥发性酸含量。而不同红酒评级对应的挥发性酸含量均值的95%置信区间折线图也显示了此趋势（作图时产生的warnings是因为评级为5和6的置信区间过小以至于无法绘制）。
+
+```{r echo=FALSE, Bivariate_Plots_citric_quality}
+ggplot(aes(x = quality, y=citric.acid), data = rw) + 
+  geom_boxplot()
+```
+
+```{r echo=FALSE, warning=FALSE, Bivariate_Plots_citric_quality_ANOVA}
+print('ANOVA for citric.acid and quality, and 95% CI plot')
+summary(aov(citric.acid ~ quality, data = rw))
+plotmeans(citric.acid ~ quality, data = rw, main = "Mean Plot with 95% CI")
+```
+
+柠檬酸与红酒评级之间的箱形图展现了其正比关系，同时ANOVA结果中的p-value远低于0.05，也显示出不同评级的红酒，在柠檬酸含量上具有显著的不同。95%置信区间折线图中，除了两端（评级为3和8）的红酒因样本量较少导致置信区间较大，评级为4-7的红酒，其柠檬酸含量都具有统计显著的差距。
+
+```{r echo=FALSE, Bivariate_Plots_sulphates_quality}
+ggplot(aes(x = quality, y=sulphates), data = rw) + 
+  geom_boxplot()
+```
+
+```{r echo=FALSE, warning=FALSE, Bivariate_Plots_sulphates_quality_ANOVA}
+print('ANOVA for sulphates and quality, and 95% CI plot')
+summary(aov(sulphates ~ quality, data = rw))
+plotmeans(sulphates ~ quality, data = rw, main = "Mean Plot with 95% CI")
+```
+
+硫酸盐添加剂与红酒评级之间的关系类似于上述柠檬酸与红酒评级之间的关系。在样本量最多的红酒评级5-7之间表现出统计显著的差距。
+
+```{r echo=FALSE, Bivariate_Plots_alcohol_quality}
+ggplot(aes(x = quality, y=alcohol), data = rw) + 
+  geom_boxplot()
+```
+
+```{r echo=FALSE, warning=FALSE, Bivariate_Plots_alcohol_quality_ANOVA}
+print('ANOVA for sulphates and quality, and 95% CI plot')
+summary(aov(alcohol ~ quality, data = rw))
+plotmeans(alcohol ~ quality, data = rw, main = "Mean Plot with 95% CI")
+```
+
+酒精浓度与红酒评级之间的箱形图在除评级5之外的其他评级间表现出了较明显的正比关系。ANOVA结果中p-value远小于0.05也说明各组别红酒的酒精含量有显著不同。95%置信区间图在评级5-8部分也表现出了统计显著的递增趋势，但评级3和4的红酒并不服从这种趋势。
 
 # 双变量分析
 
 ### 探讨你在这部分探究中观察到的一些关系。这些感兴趣的特性与数据集内其他特性有什么区别？
 
+1. 红酒中的游离二氧化硫和总二氧化硫之间存在较为明显的线性关系，总二氧化硫中除固定部分外，游离二氧化硫占非固定部分的约一半左右。但其一次线性回归的R-squared值不高（0.44），说明两者之间的关系依然受其他因素的影响。
+
+2. 与密度最为相关（相关系数）且影响最大（一次线性回归系数）的是固定酸含量和酒精浓度，而糖、柠檬酸、pH值的相关度较低。
+
+3. 红酒的酸碱值与固定酸的关系是所有关系中最为显著的（-0.687），且两者间的一次线性回归R-squared值也是所探索关系中最高的（0.47）。
+
+4. 与红酒的品质评级有明显趋势性关联的特征是挥发性酸（负相关）、柠檬酸、硫酸盐添加剂和酒精浓度（正相关）。对这四个特征进行ANOVA分析，也表明了在不同的品质评级组别下，这四个特征有明显的差异。但从95%置信区间的图来看，样本较多的评级5-7组别有较为确定的趋势。接下来可以尝试使用模型去探究不同特征对红酒品质评级的影响程度大小。
+
+相较于上述四类关系，其他特征间的相关关系较弱，所以并没有进行细致的探索。
+
 ### 你是否观察到主要特性与其他特性之间的有趣关系？
+
+本数据集的主要特征是红酒的品质评级，与其他特征的之间仅在挥发性酸、柠檬酸、硫酸盐添加剂和酒精浓度中存在较强的关联性。
 
 ### 你发现最强的关系是什么？
 
-
-
+最强的关系为红酒的酸碱值与固定酸含量之间的关系，其相关系数达到了-0.687，一次线性回归的R-squared值也是最高的0.47。这符合日常生活逻辑：固定在液体中、不能挥发的酸性物质越多，pH值越低。
 
 # 多变量绘图选择
 
-（使用逐步回归）
+从双变量探索中发现，尽管有四项特征与红酒的品质评级相关，但其各自的相关程度并不足以用以预测某一红酒的评级结果。故为了探索所有变量与评级结果的相关程度，此处使用随机森林模型就行建模。接着从模型中的特征重要性指标来判断每个特征对于红酒评级的影响程度。最终通过可视化探索，直观具体地呈现重要指标间是如何共同影响红酒评级的。
 
-```{r echo=FALSE, Multivariate_Plots}
-
+```{r echo=FALSE, Multivariate_Plots_RF}
+set.seed(8888)
+RFmodel <- randomForest(quality ~ ., data = rw, importance = TRUE, ntree=300)
+RFmodel
+importance(RFmodel,type=1)
 ```
+
+从模型的结果来看，准确率只有61%，仅仅些许超过随意猜测的50%准确率。从Confusion matrix中可以看出，模型只能较好地分辨评分为5和6的红酒。考虑到评分5和6的红酒占总样本的绝大部分（81.8%），那么模型所输出的重要性指标可以作为一定的指引去探索多变量之间的关系。
+
+从重要性指数来看，前五重要的特征依次是酒精浓度、总二氧化硫含量、硫酸盐添加剂、挥发性酸和密度。在双变量探索中所发现的四个强相关因素，除柠檬酸外（重要性指数9.92），其他三者皆在前五名中。而比较意外的是总二氧化硫含量在双变量关联中没有表现出明显的趋势性，而在模型中却相当重要（重要性指数24.16）。
+
+接下来我们将这五个重要特征两两配对绘制散点图，并对不同评级的红酒以颜色标出，以研究两个特征如何同时影响红酒品质评级。
+
+```{r echo=FALSE, Multivariate_Plots_suldio_alco}
+ggplot(aes(x = alcohol, y = total.sulfur.dioxide, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+从图中并不能发现明显的规律，故很难评判总二氧化硫含量与酒精如何共同影响红酒评级。
+
+```{r echo=FALSE, Multivariate_Plots_sulp_alco}
+ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+在酒精含量相同的情况下，硫酸盐添加剂含量越高，红酒品质评级越高。
+
+```{r echo=FALSE, Multivariate_Plots_volacid_alco}
+ggplot(aes(x = alcohol, y = volatile.acidity, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+在酒精含量相同的情况下，挥发性酸含量越高，红酒品质评级大多越低。
+
+```{r echo=FALSE, Multivariate_Plots_density_alco}
+ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，其表现为所有拟合线都互相靠近，交错在一起。
+
+```{r echo=FALSE, Multivariate_Plots_sulp_suldio}
+ggplot(aes(x = total.sulfur.dioxide, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_x_continuous(limits=c(0,180))
+```
+
+绝大部分情况下，总二氧化硫含量一定时，硫酸盐添加剂越高，红酒品质评级越高。例外情况仅存在于红酒评级为4的样本上，但其样本数量较少，拟合结果可能与真实情况有较大差异。
 
 # 多变量分析
 
@@ -336,3 +449,10 @@ summary(lm.citric.ph.with.acid)
 ------
 
 # 反思
+
+1. 可将评级分为好和差两等，或好中差三等，有利于模型训练
+
+# 参考文献
+
+1. [【r<-高级|实战|统计】R中的方差分析ANOVA](https://www.jianshu.com/p/aa80b6f65399)
+2. [[R] plotCI](http://r.789695.n4.nabble.com/R-plotCI-td808532.html)
