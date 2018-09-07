@@ -227,7 +227,7 @@ lm.alch.density <- lm(rw$density~rw$alcohol)
 summary(lm.alch.density)
 ```
 
-从酒精浓度和密度的散点图来看，相较于固定酸含量与密度的关系，其围绕一次线性拟合线的扩散程度较高，故其相关系数较低。而当酒精浓度大于12%后，密度基本低于拟合线水平，显示出线性拟合对于此部分数据解释性较弱。这种较弱的解释性也反映在线性回归的结果中，R-squared只有0.26。
+虽然从物理常识可以得知，酒精浓度的大小会直接影响液体的密度，但从酒精浓度和密度的散点图来看，相较于固定酸含量与密度的关系，其围绕一次线性拟合线的扩散程度较高，故其相关系数较低。而当酒精浓度大于12%后，密度基本低于拟合线水平，显示出线性拟合对于此部分数据解释性较弱。这种较弱的解释性也反映在线性回归的结果中，R-squared只有0.26。
 
 3. 什么因素或因素组合会影响红酒的酸碱值？
 
@@ -358,6 +358,7 @@ plotmeans(alcohol ~ quality, data = rw, main = "Mean Plot with 95% CI")
 从双变量探索中发现，尽管有四项特征与红酒的品质评级相关，但其各自的相关程度并不足以用以预测某一红酒的评级结果。故为了探索所有变量与评级结果的相关程度，此处使用随机森林模型就行建模。接着从模型中的特征重要性指标来判断每个特征对于红酒评级的影响程度。最终通过可视化探索，直观具体地呈现重要指标间是如何共同影响红酒评级的。
 
 ```{r echo=FALSE, Multivariate_Plots_RF}
+print('Modeling with Random Forest')
 set.seed(8888)
 RFmodel <- randomForest(quality ~ ., data = rw, importance = TRUE, ntree=300)
 RFmodel
@@ -371,53 +372,157 @@ importance(RFmodel,type=1)
 接下来我们将这五个重要特征两两配对绘制散点图，并对不同评级的红酒以颜色标出，以研究两个特征如何同时影响红酒品质评级。
 
 ```{r echo=FALSE, Multivariate_Plots_suldio_alco}
-ggplot(aes(x = alcohol, y = total.sulfur.dioxide, color = quality), data = rw) +
+p1 = ggplot(aes(x = alcohol, y = total.sulfur.dioxide, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE)
-```
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_y_continuous(limits=c(0,180))
 
-从图中并不能发现明显的规律，故很难评判总二氧化硫含量与酒精如何共同影响红酒评级。
-
-```{r echo=FALSE, Multivariate_Plots_sulp_alco}
-ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE)
-```
-
-在酒精含量相同的情况下，硫酸盐添加剂含量越高，红酒品质评级越高。
-
-```{r echo=FALSE, Multivariate_Plots_volacid_alco}
-ggplot(aes(x = alcohol, y = volatile.acidity, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE)
-```
-
-在酒精含量相同的情况下，挥发性酸含量越高，红酒品质评级大多越低。
-
-```{r echo=FALSE, Multivariate_Plots_density_alco}
-ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
-  geom_smooth(method = "lm", se = FALSE)
-```
-
-在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，其表现为所有拟合线都互相靠近，交错在一起。
-
-```{r echo=FALSE, Multivariate_Plots_sulp_suldio}
-ggplot(aes(x = total.sulfur.dioxide, y = sulphates, color = quality), data = rw) +
+p2 = ggplot(aes(x = total.sulfur.dioxide, y = alcohol, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_x_continuous(limits=c(0,180))
+
+grid.arrange(p1,p2,nrow=1)
 ```
 
-绝大部分情况下，总二氧化硫含量一定时，硫酸盐添加剂越高，红酒品质评级越高。例外情况仅存在于红酒评级为4的样本上，但其样本数量较少，拟合结果可能与真实情况有较大差异。
+从左图中并不能发现明显的规律，但从右图可以看出，酒精浓度越高，红酒评级越高。
+
+```{r echo=FALSE, Multivariate_Plots_sulp_alco}
+p1 = ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+p2 = ggplot(aes(x = sulphates, y = alcohol, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+从左图可以看出，在酒精含量相同的情况下，硫酸盐添加剂含量越高，红酒品质评级越高；而右图中，同样硫酸盐添加剂含量的情况下，酒精浓度越高，红酒评级越高。
+
+```{r echo=FALSE, Multivariate_Plots_volacid_alco}
+p1 = ggplot(aes(x = alcohol, y = volatile.acidity, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+p2 = ggplot(aes(x = volatile.acidity, y = alcohol, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+在酒精含量相同的情况下，挥发性酸含量越高，红酒品质评级大多越低。同样，酒精浓度越高，红酒评级越高。
+
+```{r echo=FALSE, Multivariate_Plots_density_alco}
+p1 = ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+p2 = ggplot(aes(x = density, y = alcohol, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，其表现为所有拟合线都互相靠近，缠绕交错在一起。但酒精含量越高，却能使红酒评级提高。这不仅印证了之前在双变量探索中，酒精含量和密度存在相关性的结论，且展现了密度是酒精浓度的因变量，而酒精浓度作为自变量还有除密度外的其他内涵，所以酒精浓度能将同样密度的红酒区分开，而密度却不能将同样酒精浓度的酒区分开。
+
+```{r echo=FALSE, Multivariate_Plots_sulp_suldio}
+p1 = ggplot(aes(x = total.sulfur.dioxide, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_x_continuous(limits=c(0,180))
+
+p2 = ggplot(aes(x = sulphates, y = total.sulfur.dioxide, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_y_continuous(limits=c(0,180))
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+绝大部分情况下，总二氧化硫含量一定时，硫酸盐添加剂含量越高，红酒品质评级越高。例外情况仅存在于红酒评级为4的样本上，但其样本数量较少，拟合结果可能与真实情况有较大差异。而硫酸添加剂含量一定时，不同总二氧化硫含量的红酒没有明显趋势性的区别。
+
+```{r echo=FALSE, Multivariate_Plots_volacid_suldio}
+ggplot(aes(x = total.sulfur.dioxide, y = volatile.acidity, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_x_continuous(limits=c(0,180))
+
+p2 = ggplot(aes(x = volatile.acidity, y = total.sulfur.dioxide, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_y_continuous(limits=c(0,180))
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+除了样本量很小的、红酒评级为3、4和8的红酒样本外，在总二氧化硫含量一定时，挥发酸的含量越高，红酒评级越低；挥发酸含量一定时，总二氧化硫含量越高，评级越低。
+
+```{r echo=FALSE, Multivariate_Plots_density_suldio}
+p1 = ggplot(aes(x = total.sulfur.dioxide, y = density, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_x_continuous(limits=c(0,180))
+
+p2 = ggplot(aes(x = density, y = total.sulfur.dioxide, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  scale_y_continuous(limits=c(0,180))
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+类似于上一幅图中展现的关系，在总二氧化硫含量一定时，密度越高，绝大部分红酒评级越低。
+
+```{r echo=FALSE, Multivariate_Plots_volacid_sulp}
+p1 = ggplot(aes(x = sulphates, y = volatile.acidity, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+p2 = ggplot(aes(x = volatile.acidity, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+除了样本量很小的、红酒评级为3和8的红酒样本外，在硫酸盐添加剂含量一定时，挥发性酸的含量越高，红酒评级越低；挥发性酸含量一定时，硫酸盐添加剂越多的红酒评级越高。
+
+```{r echo=FALSE, Multivariate_Plots_density_sulp}
+p1 = ggplot(aes(x = sulphates, y = density, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+p2 = ggplot(aes(x = density, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE)
+
+grid.arrange(p1,p2,nrow=1)
+```
+
+虽然左图从整体看上去，有从上往下，红酒评级逐步提高的趋势。但中间样本量最多的红酒评级为5-7的红酒，没有明显分隔的表现，所以此处结论应该是没有明显趋势。
+
+但我猜想，若将3-4合并为差，5-6合并为中，7-8合并为优的话，应该能在这个图中展现趋势。
 
 # 多变量分析
 
 ###  探讨你在这部分探究中观察到的一些关系。通过观察感兴趣的特性，是否存在相互促进的特性？
 
+本部分观察到下列特性：
+
+1. 酒精浓度几乎总能将红酒品质作出区分，酒精含量越高，红酒品质越高。不知道是不是因为摄入酒精越多，心情越容易放松，品酒师的打分会越高。
+2. 硫酸盐添加剂同样也是比较具有区分能力的特征，其含量越高，红酒品质越高。
+
 ### 这些特性之间是否存在有趣或惊人的联系呢？
 
+最令我吃惊的关系是密度与酒精浓度对于红酒品质评级的影响。在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，但酒精含量越高，却能使红酒评级提高。这不仅说明酒精含量和密度存在相关性，还极其重要地展现了密度是酒精浓度的因变量，而酒精浓度作为自变量还有除密度外的其他内涵同时在对红酒品质产生着影响。所以酒精浓度能将同样密度的红酒区分开，而密度却不能将同样酒精浓度的酒区分开。
+
 ### 选项：你是否创建过数据集的任何模型？讨论你模型的优缺点。
+
+本部分采用了随机森林作为初始模型以探求不同特征对于红酒品质评级的重要性相对大小。模型OOB错误率在39%，也即预测新样本的准确率为61%。模型的优点在于能简单快捷地获得各参数间的相对重要性，且不需要考虑train-test split和cross validation的设计。缺点在于由于没有对特征进行特征工程，完全使用原始特征，准确率较低。
 
 ------
 
