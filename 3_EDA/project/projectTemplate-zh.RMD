@@ -181,7 +181,7 @@ ggpairs(rw)
 1. 红酒中游离二氧化硫和总二氧化硫是否存在某些关联度？-- 相关系数0.667，显示出较明显的线性关系。
 
 ```{r echo=FALSE, Bivariate_Plots_sulfur}
-ggplot(aes(x = free.sulfur.dioxide, y=total.sulfur.dioxide), data = rw) + 
+ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) + 
   geom_point() + 
   geom_smooth(method = 'lm', color = 'red')
 ```
@@ -375,12 +375,12 @@ importance(RFmodel,type=1)
 p1 = ggplot(aes(x = alcohol, y = total.sulfur.dioxide, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_y_continuous(limits=c(0,180))
+  scale_y_continuous(limits = c(0,180))
 
 p2 = ggplot(aes(x = total.sulfur.dioxide, y = alcohol, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_x_continuous(limits=c(0,180))
+  scale_x_continuous(limits = c(0,180))
 
 grid.arrange(p1,p2,nrow=1)
 ```
@@ -433,12 +433,12 @@ grid.arrange(p1,p2,nrow=1)
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = sulphates, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_x_continuous(limits=c(0,180))
+  scale_x_continuous(limits = c(0,180))
 
 p2 = ggplot(aes(x = sulphates, y = total.sulfur.dioxide, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_y_continuous(limits=c(0,180))
+  scale_y_continuous(limits = c(0,180))
 
 grid.arrange(p1,p2,nrow=1)
 ```
@@ -449,12 +449,12 @@ grid.arrange(p1,p2,nrow=1)
 ggplot(aes(x = total.sulfur.dioxide, y = volatile.acidity, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_x_continuous(limits=c(0,180))
+  scale_x_continuous(limits = c(0,180))
 
 p2 = ggplot(aes(x = volatile.acidity, y = total.sulfur.dioxide, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_y_continuous(limits=c(0,180))
+  scale_y_continuous(limits = c(0,180))
 
 grid.arrange(p1,p2,nrow=1)
 ```
@@ -465,12 +465,12 @@ grid.arrange(p1,p2,nrow=1)
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = density, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_x_continuous(limits=c(0,180))
+  scale_x_continuous(limits = c(0,180))
 
 p2 = ggplot(aes(x = density, y = total.sulfur.dioxide, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
-  scale_y_continuous(limits=c(0,180))
+  scale_y_continuous(limits = c(0,180))
 
 grid.arrange(p1,p2,nrow=1)
 ```
@@ -530,7 +530,13 @@ grid.arrange(p1,p2,nrow=1)
 
 ### 绘图一
 ```{r echo=FALSE, Plot_One}
-
+ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) + 
+  geom_point() + 
+  scale_x_continuous(limits = c(0,170)) + 
+  geom_smooth(method = 'lm', color = 'red') + 
+  xlab('总二氧化硫含量/毫克每立方分米') + 
+  ylab('游离二氧化硫含量/毫克每立方分米') +
+  ggtitle('游离二氧化硫与总二氧化硫含量的关系') 
 ```
 
 ### 描述一

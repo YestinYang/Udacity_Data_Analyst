@@ -1,0 +1,852 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+
+  \title{}
+    \pretitle{\vspace{\droptitle}}
+  \posttitle{}
+    \author{}
+    \preauthor{}\postauthor{}
+    \date{}
+    \predate{}\postdate{}
+  
+
+\begin{document}
+
+\section{红酒质量探索 by 杨粤}\label{-by-}
+
+\begin{verbatim}
+## [1] "Counts of duplicated records"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## FALSE  TRUE 
+##  1359   240
+\end{verbatim}
+
+本报告探索了红酒质量数据集。数据集包含了1599条红酒样本记录，及其11个特征和1个品质评级信息。对数据集中240条重复记录做了移除处理（原因见``单变量分析''部分）。
+
+\section{单变量绘图选择}
+
+\begin{verbatim}
+## [1] 1359   12
+\end{verbatim}
+
+\begin{verbatim}
+## 'data.frame':    1359 obs. of  12 variables:
+##  $ fixed.acidity       : num  7.4 7.8 7.8 11.2 7.4 7.9 7.3 7.8 7.5 6.7 ...
+##  $ volatile.acidity    : num  0.7 0.88 0.76 0.28 0.66 0.6 0.65 0.58 0.5 0.58 ...
+##  $ citric.acid         : num  0 0 0.04 0.56 0 0.06 0 0.02 0.36 0.08 ...
+##  $ residual.sugar      : num  1.9 2.6 2.3 1.9 1.8 1.6 1.2 2 6.1 1.8 ...
+##  $ chlorides           : num  0.076 0.098 0.092 0.075 0.075 0.069 0.065 0.073 0.071 0.097 ...
+##  $ free.sulfur.dioxide : num  11 25 15 17 13 15 15 9 17 15 ...
+##  $ total.sulfur.dioxide: num  34 67 54 60 40 59 21 18 102 65 ...
+##  $ density             : num  0.998 0.997 0.997 0.998 0.998 ...
+##  $ pH                  : num  3.51 3.2 3.26 3.16 3.51 3.3 3.39 3.36 3.35 3.28 ...
+##  $ sulphates           : num  0.56 0.68 0.65 0.58 0.56 0.46 0.47 0.57 0.8 0.54 ...
+##  $ alcohol             : num  9.4 9.8 9.8 9.8 9.4 9.4 10 9.5 10.5 9.2 ...
+##  $ quality             : int  5 5 5 6 5 5 7 7 5 5 ...
+\end{verbatim}
+
+\begin{verbatim}
+##  fixed.acidity    volatile.acidity  citric.acid     residual.sugar  
+##  Min.   : 4.600   Min.   :0.1200   Min.   :0.0000   Min.   : 0.900  
+##  1st Qu.: 7.100   1st Qu.:0.3900   1st Qu.:0.0900   1st Qu.: 1.900  
+##  Median : 7.900   Median :0.5200   Median :0.2600   Median : 2.200  
+##  Mean   : 8.311   Mean   :0.5295   Mean   :0.2723   Mean   : 2.523  
+##  3rd Qu.: 9.200   3rd Qu.:0.6400   3rd Qu.:0.4300   3rd Qu.: 2.600  
+##  Max.   :15.900   Max.   :1.5800   Max.   :1.0000   Max.   :15.500  
+##    chlorides       free.sulfur.dioxide total.sulfur.dioxide
+##  Min.   :0.01200   Min.   : 1.00       Min.   :  6.00      
+##  1st Qu.:0.07000   1st Qu.: 7.00       1st Qu.: 22.00      
+##  Median :0.07900   Median :14.00       Median : 38.00      
+##  Mean   :0.08812   Mean   :15.89       Mean   : 46.83      
+##  3rd Qu.:0.09100   3rd Qu.:21.00       3rd Qu.: 63.00      
+##  Max.   :0.61100   Max.   :72.00       Max.   :289.00      
+##     density             pH         sulphates         alcohol     
+##  Min.   :0.9901   Min.   :2.74   Min.   :0.3300   Min.   : 8.40  
+##  1st Qu.:0.9956   1st Qu.:3.21   1st Qu.:0.5500   1st Qu.: 9.50  
+##  Median :0.9967   Median :3.31   Median :0.6200   Median :10.20  
+##  Mean   :0.9967   Mean   :3.31   Mean   :0.6587   Mean   :10.43  
+##  3rd Qu.:0.9978   3rd Qu.:3.40   3rd Qu.:0.7300   3rd Qu.:11.10  
+##  Max.   :1.0037   Max.   :4.01   Max.   :2.0000   Max.   :14.90  
+##     quality     
+##  Min.   :3.000  
+##  1st Qu.:5.000  
+##  Median :6.000  
+##  Mean   :5.623  
+##  3rd Qu.:6.000  
+##  Max.   :8.000
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Ignoring unknown parameters: binwidth, bins, pad
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_quality-1.pdf}
+
+从红酒品质评级的直方图来看，大部分红酒的评级处于中等水平。虽然评级的分值设定为0-10，但就本数据集来说，红酒的评级处于3-8的范围内，并没有出现极差或极好的红酒。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_acid-1.pdf}
+
+\begin{verbatim}
+## [1] "Counts of wines with zero citric acid"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##   0 
+## 118
+\end{verbatim}
+
+从红酒的三种酸性指标直方图来看，每种酸都展现了长尾分布。其中固定酸在\(7\text{~}8g/dm^3\)左右出现峰值，并逐步下降延伸至\(16g/dm^3\)。挥发性酸在\(0.4\text{~}0.6g/dm^3\)范围内出现了三个波峰，而挥发性酸大于\(0.8g/dm^3\)的红酒数量很少，原因可能与口感有关：越多的挥发性酸会增加红酒的醋味，劣化口感。
+
+绝大部分红酒都含有小于\(0.5g/dm^3\)的柠檬酸，甚至有118种红酒（8.7\%）完全不含有柠檬酸。根据维基百科``Acids
+in wine''
+条目的介绍，柠檬酸只存在于极少数酿酒所用的葡萄中，这解释了红酒中的柠檬酸含量较低甚至没有的原因。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_sugar_salt-1.pdf}
+
+样本中大部分红酒的糖含量在\(2g/dm^3\)左右，而糖含量大于\(4g/dm^3\)的红酒较少，且没有出现超过\(45g/dm^3\)的甜酒。大部分红酒的盐含量在\(0.08g/dm^3\)左右。糖和盐的分布均呈向右长尾的钟型分布。我们再去掉长尾，放大钟型部分看一看。
+
+\begin{verbatim}
+## Warning: Removed 101 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 63 rows containing non-finite values (stat_bin).
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_sugar_salt_zoom-1.pdf}
+
+\begin{verbatim}
+## [1] "Value counts of sugar attribute"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+##  0.9  1.2  1.3  1.4  1.5  1.6 1.65  1.7 1.75  1.8  1.9    2 2.05  2.1 2.15 
+##    1    7    5   29   25   56    2   62    2  108   97  133    1  104    2 
+##  2.2 2.25  2.3 2.35  2.4  2.5 2.55  2.6 2.65  2.7  2.8 2.85  2.9 2.95    3 
+##  110    1   86    1   74   74    1   71    1   36   45    1   19    1   22 
+##  3.1  3.2  3.3  3.4 3.45  3.5  3.6 3.65  3.7 3.75  3.8  3.9    4  4.1  4.2 
+##    7   13   11   14    1    2    7    1    4    1    8    6    6    6    4 
+## 4.25  4.3  4.4  4.5  4.6 4.65  4.7  4.8    5  5.1 5.15  5.2  5.4  5.5  5.6 
+##    1    6    4    3    5    1    1    3    1    4    1    3    1    5    4 
+##  5.7  5.8  5.9    6  6.1  6.2  6.3  6.4 6.55  6.6  6.7    7  7.2  7.3  7.5 
+##    1    3    2    3    3    3    2    2    1    2    2    1    1    1    1 
+##  7.8  7.9  8.1  8.3  8.6  8.8  8.9    9 10.7   11 12.9 13.4 13.8 13.9 15.4 
+##    2    2    1    3    1    1    1    1    1    1    1    1    1    1    1 
+## 15.5 
+##    1
+\end{verbatim}
+
+明显看出红酒的糖含量以\(0.05g/dm^3\)为最小间隔，类似离散数据的直方图，这可能与测量的精度有关。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_sulfur-1.pdf}
+
+样本中大部分红酒含有的游离二氧化硫和总二氧化硫的量都在较低的水平聚集，并且两者的分布信息（直方图）有非常近似的形态，从而猜测游离二氧化硫应该在总二氧化硫中占有较为固定的比例，也即两者具有某种相关性。对于硫酸盐添加剂来说，由于其为人工添加（独立变量），故其分布呈现右长尾的钟型分布。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_density-1.pdf}
+
+绝大部分红酒的密度都稍低于水的密度，仅有极少部分红酒的密度大于水。根据数据集的描述，酒精比例和糖含量对密度有直接影响，后续将考察这三者的相互关系。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_pH-1.pdf}
+
+\begin{verbatim}
+## [1] "Summary of pH attribute"
+\end{verbatim}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    2.74    3.21    3.31    3.31    3.40    4.01
+\end{verbatim}
+
+所有红酒（除2款红酒外）的pH值都小于4，75\%的红酒处于3.2\textasciitilde{}3.4的区间内。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Univariate_Plots_alcohol-1.pdf}
+
+\begin{verbatim}
+## [1] "Summary of alcohol attribute"
+\end{verbatim}
+
+\begin{verbatim}
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##    8.40    9.50   10.20   10.43   11.10   14.90
+\end{verbatim}
+
+\begin{verbatim}
+## [1] "Maximum of alcohol"
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 14.9
+\end{verbatim}
+
+红酒的度数（体积比例）呈右偏斜分布，约75\%的红酒低于11度，最高度的红酒为14.9度。
+
+\section{单变量分析}
+
+\subsubsection{你的数据集结构是什么？}
+
+数据集中有1599条红酒样本记录，及其11个连续变量（固定酸、挥发性酸、柠檬酸、糖、盐、游离二氧化硫、总二氧化硫、密度、酸碱值、硫酸盐、酒精含量）和1个离散变量--品质评级（0-非常差，到10-非常好）。
+
+\subsubsection{你的数据集内感兴趣的主要特性有哪些？}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  红酒中游离二氧化硫和总二氧化硫是否存在某些关联度？
+\item
+  酒精比例和糖含量对红酒密度有什么样的影响？
+\item
+  什么因素或因素组合会影响红酒的酸碱值？
+\item
+  什么因素或因素间的组合会影响红酒的评分等级？
+\end{enumerate}
+
+\subsubsection{你认为数据集内哪些其他特征可以帮助你探索兴趣特点？}
+
+根据查阅的外部资料，红酒的口感会受到单宁、酸、糖和酒精含量的影响。在当前的数据集中，已经有具体的各类酸、糖和酒精含量数据，其组合应该能对于红酒的评级信息有一定的预见能力。
+
+\subsubsection{根据数据集内已有变量，你是否创建了任何新变量？}
+
+没有，原因在于考虑到各项指标相对独立，不够成相互依存或形成某一更大整体指标的情况。
+
+\subsubsection{在已经探究的特性中，是否存在任何异常分布？你是否对数据进行一些操作，如清洁、调整或改变数据的形式？如果是，你为什么会这样做？}
+
+在探索后发现，数据集中有240条完全一样的记录，考虑到红酒这一标的物很难在11个连续变量上具有完全一致的数值，为了确保EDA的准确性（避免重复不真实数据影响分布和回归模型的结果），该部分数据在探索前已经移除。
+
+\section{双变量绘图选择}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_matrix-1.pdf}
+
+从相关度矩阵中最后一列的箱形图可以看出，挥发性酸与红酒的品质评级呈负相关关系，而柠檬酸、硫酸盐添加剂和酒精浓度与品质评级呈正相关关系。其他因素对于红酒的品质评级没有明显的趋势性影响。
+
+对于在单变量探索中发现的问题，我们逐个讨论：
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  红酒中游离二氧化硫和总二氧化硫是否存在某些关联度？--
+  相关系数0.667，显示出较明显的线性关系。
+\end{enumerate}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_sulfur-1.pdf}
+
+\begin{verbatim}
+## [1] "Linear model of free and total sulfur dioxide, with corresponding significance test"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = rw$total.sulfur.dioxide ~ rw$free.sulfur.dioxide)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -56.602 -13.617  -7.448   7.615 196.070 
+## 
+## Coefficients:
+##                        Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)            12.91344    1.22965    10.5   <2e-16 ***
+## rw$free.sulfur.dioxide  2.13376    0.06466    33.0   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 24.89 on 1357 degrees of freedom
+## Multiple R-squared:  0.4452, Adjusted R-squared:  0.4448 
+## F-statistic:  1089 on 1 and 1357 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+进一步从散点图和线性回归的结果来看，R-squared为0.44，且t-test的p值远小于0.05，故基本可以得出结论：除固定部分外（截距12.91），游离二氧化硫占总二氧化硫其余部分的约一半的比例（权重为2.13）。
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  酒精比例和糖含量对红酒密度有什么样的影响？
+\end{enumerate}
+
+根据相关度矩阵中的结果，结合单变量中的猜测，与密度最为相关的是固定酸含量（相关系数0.67），而原本猜测中的酒精浓度也与密度关联较大（相关系数-0.505）。但糖、柠檬酸、pH值（中间变量/因变量，受其他自变量的影响，如固定酸和柠檬酸）与密度相关性较低（相关系数绝对值在0.32～0.35左右）。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_acid_density-1.pdf}
+
+\begin{verbatim}
+## [1] "Linear model of fixed.acidity and density, with corresponding significance test"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = rw$density ~ rw$fixed.acidity)
+## 
+## Residuals:
+##        Min         1Q     Median         3Q        Max 
+## -0.0064150 -0.0007590  0.0001003  0.0009360  0.0056186 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      9.907e-01  1.841e-04 5383.00   <2e-16 ***
+## rw$fixed.acidity 7.211e-04  2.168e-05   33.26   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.001388 on 1357 degrees of freedom
+## Multiple R-squared:  0.4492, Adjusted R-squared:  0.4488 
+## F-statistic:  1107 on 1 and 1357 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+进一步从散点图和线性回归结果验证固定酸与密度间的关系，R-squared为0.45，t-test远小于0.05，可以确定两者线性相关。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_alcohol_density-1.pdf}
+
+\begin{verbatim}
+## [1] "Linear model of alcohol and density, with corresponding significance test"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = rw$density ~ rw$alcohol)
+## 
+## Residuals:
+##        Min         1Q     Median         3Q        Max 
+## -0.0049633 -0.0010855 -0.0002321  0.0008120  0.0073690 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  1.006e+00  4.244e-04 2369.70   <2e-16 ***
+## rw$alcohol  -8.722e-04  4.047e-05  -21.55   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.001614 on 1357 degrees of freedom
+## Multiple R-squared:  0.255,  Adjusted R-squared:  0.2545 
+## F-statistic: 464.5 on 1 and 1357 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+虽然从物理常识可以得知，酒精浓度的大小会直接影响液体的密度，但从酒精浓度和密度的散点图来看，相较于固定酸含量与密度的关系，其围绕一次线性拟合线的扩散程度较高，故其相关系数较低。而当酒精浓度大于12\%后，密度基本低于拟合线水平，显示出线性拟合对于此部分数据解释性较弱。这种较弱的解释性也反映在线性回归的结果中，R-squared只有0.26。
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  什么因素或因素组合会影响红酒的酸碱值？
+\end{enumerate}
+
+从相关度矩阵种可以得出，固定酸含量与pH的相关度最大（相关系数-0.687，含量越高，pH越小），其次是柠檬酸（相关系数-0.55）。而其他诸如硫酸盐添加剂、酒精浓度与pH的关联较小（相关系数绝对值在0.21左右）。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_acid_pH-1.pdf}
+
+\begin{verbatim}
+## [1] "Linear model of fixed.acidity and pH, with corresponding significance test"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = rw$pH ~ rw$fixed.acidity)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.51527 -0.06495  0.00376  0.06440  0.52182 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)       3.819148   0.014954   255.4   <2e-16 ***
+## rw$fixed.acidity -0.061291   0.001761   -34.8   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.1127 on 1357 degrees of freedom
+## Multiple R-squared:  0.4715, Adjusted R-squared:  0.4711 
+## F-statistic:  1211 on 1 and 1357 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+固定酸与pH值之间的散点图和线性回归结果（R-squared为0.47，t-test远小于0.05）可以看出两者有较明显线性关系。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_citric_pH-1.pdf}
+
+\begin{verbatim}
+## [1] "Linear model of citric.acid and pH, with corresponding significance test"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = rw$pH ~ rw$citric.acid)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.50062 -0.07853 -0.00425  0.08139  0.58139 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)     3.428613   0.006024  569.13   <2e-16 ***
+## rw$citric.acid -0.436328   0.017971  -24.28   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.1295 on 1357 degrees of freedom
+## Multiple R-squared:  0.3028, Adjusted R-squared:  0.3023 
+## F-statistic: 589.5 on 1 and 1357 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+相对于固定酸与pH值之间的关系，柠檬酸与pH值的一次线性关系较弱，R-squared仅有0.3。其中较为明显的是118种不含柠檬酸的样本聚集在0处，影响了线性回归的可解释性。当去除这些不含柠檬酸的样本后，R-sqaured降至0.26，再次显示了一次线性回归不能很好的解释柠檬酸与pH值间的关系。
+
+\begin{verbatim}
+## [1] "Linear model of citric.acidity and pH for samples with citric acid, and its corresponding significance test"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = rw.with.citric$pH ~ rw.with.citric$citric.acid)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.49355 -0.07792 -0.00314  0.07993  0.54297 
+## 
+## Coefficients:
+##                             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                 3.418982   0.006919  494.15   <2e-16 ***
+## rw.with.citric$citric.acid -0.412987   0.019723  -20.94   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.1283 on 1239 degrees of freedom
+## Multiple R-squared:  0.2614, Adjusted R-squared:  0.2608 
+## F-statistic: 438.4 on 1 and 1239 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  什么因素或因素间的组合会影响红酒的评分等级？
+\end{enumerate}
+
+本部分仅讨论什么因素会影响红酒评分，而对于因素的组合将放在多变量分析中讨论。
+
+如本部分开头所述，相关度矩阵中最后一列的箱形图展示出挥发性酸与红酒的品质评级呈负相关关系，而柠檬酸、硫酸盐添加剂和酒精浓度与品质评级呈正相关关系。其他因素对于红酒的品质评级没有明显的趋势性影响。
+
+为验证上述观察，对挥发性酸、柠檬酸、硫酸盐、酒精浓度与红酒品质评级进行ANOVA分析，其中自变量为红酒品质评级（quality），因变量为前四项。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_volatile_quality-1.pdf}
+
+\begin{verbatim}
+## [1] "ANOVA for volatile.acidity and quality, and 95% CI plot"
+\end{verbatim}
+
+\begin{verbatim}
+##               Df Sum Sq Mean Sq F value Pr(>F)    
+## quality        5   7.50  1.5006   53.44 <2e-16 ***
+## Residuals   1353  37.99  0.0281                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_volatile_quality_ANOVA-1.pdf}
+
+从箱形图可以看出，评级越高的红酒，其挥发性酸的含量越低。而ANOVA结果中的p-value远低于0.05，显示不同的红酒评级具有不同的挥发性酸含量。而不同红酒评级对应的挥发性酸含量均值的95\%置信区间折线图也显示了此趋势（作图时产生的warnings是因为评级为5和6的置信区间过小以至于无法绘制）。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_citric_quality-1.pdf}
+
+\begin{verbatim}
+## [1] "ANOVA for citric.acid and quality, and 95% CI plot"
+\end{verbatim}
+
+\begin{verbatim}
+##               Df Sum Sq Mean Sq F value   Pr(>F)    
+## quality        5   2.95  0.5897   16.29 1.24e-15 ***
+## Residuals   1353  48.97  0.0362                     
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_citric_quality_ANOVA-1.pdf}
+
+柠檬酸与红酒评级之间的箱形图展现了其正比关系，同时ANOVA结果中的p-value远低于0.05，也显示出不同评级的红酒，在柠檬酸含量上具有显著的不同。95\%置信区间折线图中，除了两端（评级为3和8）的红酒因样本量较少导致置信区间较大，评级为4-7的红酒，其柠檬酸含量都具有统计显著的差距。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_sulphates_quality-1.pdf}
+
+\begin{verbatim}
+## [1] "ANOVA for sulphates and quality, and 95% CI plot"
+\end{verbatim}
+
+\begin{verbatim}
+##               Df Sum Sq Mean Sq F value Pr(>F)    
+## quality        5   2.54  0.5072   18.54 <2e-16 ***
+## Residuals   1353  37.02  0.0274                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_sulphates_quality_ANOVA-1.pdf}
+
+硫酸盐添加剂与红酒评级之间的关系类似于上述柠檬酸与红酒评级之间的关系。在样本量最多的红酒评级5-7之间表现出统计显著的差距。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_alcohol_quality-1.pdf}
+
+\begin{verbatim}
+## [1] "ANOVA for sulphates and quality, and 95% CI plot"
+\end{verbatim}
+
+\begin{verbatim}
+##               Df Sum Sq Mean Sq F value Pr(>F)    
+## quality        5  439.7   87.94   103.4 <2e-16 ***
+## Residuals   1353 1150.3    0.85                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Bivariate_Plots_alcohol_quality_ANOVA-1.pdf}
+
+酒精浓度与红酒评级之间的箱形图在除评级5之外的其他评级间表现出了较明显的正比关系。ANOVA结果中p-value远小于0.05也说明各组别红酒的酒精含量有显著不同。95\%置信区间图在评级5-8部分也表现出了统计显著的递增趋势，但评级3和4的红酒并不服从这种趋势。
+
+\section{双变量分析}
+
+\subsubsection{探讨你在这部分探究中观察到的一些关系。这些感兴趣的特性与数据集内其他特性有什么区别？}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  红酒中的游离二氧化硫和总二氧化硫之间存在较为明显的线性关系，总二氧化硫中除固定部分外，游离二氧化硫占非固定部分的约一半左右。但其一次线性回归的R-squared值不高（0.44），说明两者之间的关系依然受其他因素的影响。
+\item
+  与密度最为相关（相关系数）且影响最大（一次线性回归系数）的是固定酸含量和酒精浓度，而糖、柠檬酸、pH值的相关度较低。
+\item
+  红酒的酸碱值与固定酸的关系是所有关系中最为显著的（-0.687），且两者间的一次线性回归R-squared值也是所探索关系中最高的（0.47）。
+\item
+  与红酒的品质评级有明显趋势性关联的特征是挥发性酸（负相关）、柠檬酸、硫酸盐添加剂和酒精浓度（正相关）。对这四个特征进行ANOVA分析，也表明了在不同的品质评级组别下，这四个特征有明显的差异。但从95\%置信区间的图来看，样本较多的评级5-7组别有较为确定的趋势。接下来可以尝试使用模型去探究不同特征对红酒品质评级的影响程度大小。
+\end{enumerate}
+
+相较于上述四类关系，其他特征间的相关关系较弱，所以并没有进行细致的探索。
+
+\subsubsection{你是否观察到主要特性与其他特性之间的有趣关系？}
+
+本数据集的主要特征是红酒的品质评级，与其他特征的之间仅在挥发性酸、柠檬酸、硫酸盐添加剂和酒精浓度中存在较强的关联性。
+
+\subsubsection{你发现最强的关系是什么？}
+
+最强的关系为红酒的酸碱值与固定酸含量之间的关系，其相关系数达到了-0.687，一次线性回归的R-squared值也是最高的0.47。这符合日常生活逻辑：固定在液体中、不能挥发的酸性物质越多，pH值越低。
+
+\section{多变量绘图选择}
+
+从双变量探索中发现，尽管有四项特征与红酒的品质评级相关，但其各自的相关程度并不足以用以预测某一红酒的评级结果。故为了探索所有变量与评级结果的相关程度，此处使用随机森林模型就行建模。接着从模型中的特征重要性指标来判断每个特征对于红酒评级的影响程度。最终通过可视化探索，直观具体地呈现重要指标间是如何共同影响红酒评级的。
+
+\begin{verbatim}
+## [1] "Modeling with Random Forest"
+\end{verbatim}
+
+\begin{verbatim}
+## 
+## Call:
+##  randomForest(formula = quality ~ ., data = rw, importance = TRUE,      ntree = 300) 
+##                Type of random forest: classification
+##                      Number of trees: 300
+## No. of variables tried at each split: 3
+## 
+##         OOB estimate of  error rate: 39%
+## Confusion matrix:
+##   3 4   5   6  7 8 class.error
+## 3 0 0   8   2  0 0   1.0000000
+## 4 1 1  35  15  1 0   0.9811321
+## 5 0 1 431 141  4 0   0.2530329
+## 6 0 0 154 341 39 1   0.3626168
+## 7 0 0  11  98 56 2   0.6646707
+## 8 0 0   0   8  9 0   1.0000000
+\end{verbatim}
+
+\begin{verbatim}
+##                      MeanDecreaseAccuracy
+## fixed.acidity                   11.089697
+## volatile.acidity                18.793857
+## citric.acid                      9.919076
+## residual.sugar                  10.757124
+## chlorides                       12.435697
+## free.sulfur.dioxide              7.321324
+## total.sulfur.dioxide            24.161492
+## density                         15.445524
+## pH                               9.474776
+## sulphates                       22.926147
+## alcohol                         38.761733
+\end{verbatim}
+
+从模型的结果来看，准确率只有61\%，仅仅些许超过随意猜测的50\%准确率。从Confusion
+matrix中可以看出，模型只能较好地分辨评分为5和6的红酒。考虑到评分5和6的红酒占总样本的绝大部分（81.8\%），那么模型所输出的重要性指标可以作为一定的指引去探索多变量之间的关系。
+
+从重要性指数来看，前五重要的特征依次是酒精浓度、总二氧化硫含量、硫酸盐添加剂、挥发性酸和密度。在双变量探索中所发现的四个强相关因素，除柠檬酸外（重要性指数9.92），其他三者皆在前五名中。而比较意外的是总二氧化硫含量在双变量关联中没有表现出明显的趋势性，而在模型中却相当重要（重要性指数24.16）。
+
+接下来我们将这五个重要特征两两配对绘制散点图，并对不同评级的红酒以颜色标出，以研究两个特征如何同时影响红酒品质评级。
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 5 rows containing missing values (geom_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_suldio_alco-1.pdf}
+
+从左图中并不能发现明显的规律，但从右图可以看出，酒精浓度越高，红酒评级越高。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_sulp_alco-1.pdf}
+
+从左图可以看出，在酒精含量相同的情况下，硫酸盐添加剂含量越高，红酒品质评级越高；而右图中，同样硫酸盐添加剂含量的情况下，酒精浓度越高，红酒评级越高。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_volacid_alco-1.pdf}
+
+在酒精含量相同的情况下，挥发性酸含量越高，红酒品质评级大多越低。同样，酒精浓度越高，红酒评级越高。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_density_alco-1.pdf}
+
+在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，其表现为所有拟合线都互相靠近，缠绕交错在一起。但酒精含量越高，却能使红酒评级提高。这不仅印证了之前在双变量探索中，酒精含量和密度存在相关性的结论，且展现了密度是酒精浓度的因变量，而酒精浓度作为自变量还有除密度外的其他内涵，所以酒精浓度能将同样密度的红酒区分开，而密度却不能将同样酒精浓度的酒区分开。
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_sulp_suldio-1.pdf}
+
+绝大部分情况下，总二氧化硫含量一定时，硫酸盐添加剂含量越高，红酒品质评级越高。例外情况仅存在于红酒评级为4的样本上，但其样本数量较少，拟合结果可能与真实情况有较大差异。而硫酸添加剂含量一定时，不同总二氧化硫含量的红酒没有明显趋势性的区别。
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_volacid_suldio-1.pdf}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_volacid_suldio-2.pdf}
+
+除了样本量很小的、红酒评级为3、4和8的红酒样本外，在总二氧化硫含量一定时，挥发酸的含量越高，红酒评级越低；挥发酸含量一定时，总二氧化硫含量越高，评级越低。
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing non-finite values (stat_smooth).
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: Removed 2 rows containing missing values (geom_point).
+\end{verbatim}
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_density_suldio-1.pdf}
+
+类似于上一幅图中展现的关系，在总二氧化硫含量一定时，密度越高，绝大部分红酒评级越低。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_volacid_sulp-1.pdf}
+
+除了样本量很小的、红酒评级为3和8的红酒样本外，在硫酸盐添加剂含量一定时，挥发性酸的含量越高，红酒评级越低；挥发性酸含量一定时，硫酸盐添加剂越多的红酒评级越高。
+
+\includegraphics{projectTemplate-zh_files/figure-latex/Multivariate_Plots_density_sulp-1.pdf}
+
+虽然左图从整体看上去，有从上往下，红酒评级逐步提高的趋势。但中间样本量最多的红酒评级为5-7的红酒，没有明显分隔的表现，所以此处结论应该是没有明显趋势。
+
+但我猜想，若将3-4合并为差，5-6合并为中，7-8合并为优的话，应该能在这个图中展现趋势。
+
+\section{多变量分析}
+
+\subsubsection{探讨你在这部分探究中观察到的一些关系。通过观察感兴趣的特性，是否存在相互促进的特性？}
+
+本部分观察到下列特性：
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  酒精浓度几乎总能将红酒品质作出区分，酒精含量越高，红酒品质越高。不知道是不是因为摄入酒精越多，心情越容易放松，品酒师的打分会越高。
+\item
+  硫酸盐添加剂同样也是比较具有区分能力的特征，其含量越高，红酒品质越高。
+\end{enumerate}
+
+\subsubsection{这些特性之间是否存在有趣或惊人的联系呢？}
+
+最令我吃惊的关系是密度与酒精浓度对于红酒品质评级的影响。在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，但酒精含量越高，却能使红酒评级提高。这不仅说明酒精含量和密度存在相关性，还极其重要地展现了密度是酒精浓度的因变量，而酒精浓度作为自变量还有除密度外的其他内涵同时在对红酒品质产生着影响。所以酒精浓度能将同样密度的红酒区分开，而密度却不能将同样酒精浓度的酒区分开。
+
+\subsubsection{选项：你是否创建过数据集的任何模型？讨论你模型的优缺点。}
+
+本部分采用了随机森林作为初始模型以探求不同特征对于红酒品质评级的重要性相对大小。模型OOB错误率在39\%，也即预测新样本的准确率为61\%。模型的优点在于能简单快捷地获得各参数间的相对重要性，且不需要考虑train-test
+split和cross
+validation的设计。缺点在于由于没有对特征进行特征工程，完全使用原始特征，准确率较低。
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{定稿图与总结}
+
+\subsubsection{绘图一}
+
+\subsubsection{描述一}
+
+\subsubsection{绘图二}
+
+\subsubsection{描述二}
+
+\subsubsection{绘图三}
+
+\subsubsection{描述三}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{反思}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  可将评级分为好和差两等，或好中差三等，有利于模型训练
+\end{enumerate}
+
+\section{参考文献}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \href{https://www.jianshu.com/p/aa80b6f65399}{【r\textless{}-高级\textbar{}实战\textbar{}统计】R中的方差分析ANOVA}
+\item
+  \href{http://r.789695.n4.nabble.com/R-plotCI-td808532.html}{{[}R{]}
+  plotCI}
+\end{enumerate}
+
+
+\end{document}
