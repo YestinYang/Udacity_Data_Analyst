@@ -23,7 +23,7 @@ library(randomForest)
 
 ```{r echo=FALSE, Load_the_Data}
 # 加载数据
-setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
+# setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
 
 rw <- read.csv("wineQualityReds.csv", sep = ',')
 
@@ -170,7 +170,7 @@ max(rw$alcohol)
 在探索后发现，数据集中有240条完全一样的记录，考虑到红酒这一标的物很难在11个连续变量上具有完全一致的数值，为了确保EDA的准确性（避免重复不真实数据影响分布和回归模型的结果），该部分数据在探索前已经移除。
 
 # 双变量绘图选择
-```{r echo=FALSE, Bivariate_Plots_matrix}
+```{r echo=FALSE, Bivariate_Plots_matrix, fig.width=10, fig.height=10}
 ggpairs(rw)
 ```
 
@@ -189,11 +189,11 @@ ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) +
 ```{r echo=FALSE, Bivariate_Plots_sulfur_lm}
 print('Linear model of free and total sulfur dioxide, with corresponding significance test')
 
-lm.sulfur <- lm(rw$total.sulfur.dioxide~rw$free.sulfur.dioxide)
+lm.sulfur <- lm(rw$free.sulfur.dioxide~rw$total.sulfur.dioxide)
 summary(lm.sulfur)
 ```
 
-进一步从散点图和线性回归的结果来看，R-squared为0.44，且t-test的p值远小于0.05，故基本可以得出结论：除固定部分外（截距12.91），游离二氧化硫占总二氧化硫其余部分的约一半的比例（权重为2.13）。
+进一步从散点图和线性回归的结果来看，R-squared为0.44，且t-test的p值远小于0.05，故基本可以得出结论：游离二氧化硫占总二氧化硫中略多（截距6.12）于五分之一（权重为0.21）。
 
 2. 酒精比例和糖含量对红酒密度有什么样的影响？
 
@@ -371,7 +371,7 @@ importance(RFmodel,type=1)
 
 接下来我们将这五个重要特征两两配对绘制散点图，并对不同评级的红酒以颜色标出，以研究两个特征如何同时影响红酒品质评级。
 
-```{r echo=FALSE, Multivariate_Plots_suldio_alco}
+```{r echo=FALSE, warning=FALSE, Multivariate_Plots_suldio_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = total.sulfur.dioxide, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
@@ -387,7 +387,7 @@ grid.arrange(p1,p2,nrow=1)
 
 从左图中并不能发现明显的规律，但从右图可以看出，酒精浓度越高，红酒评级越高。
 
-```{r echo=FALSE, Multivariate_Plots_sulp_alco}
+```{r echo=FALSE, Multivariate_Plots_sulp_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE)
@@ -401,7 +401,7 @@ grid.arrange(p1,p2,nrow=1)
 
 从左图可以看出，在酒精含量相同的情况下，硫酸盐添加剂含量越高，红酒品质评级越高；而右图中，同样硫酸盐添加剂含量的情况下，酒精浓度越高，红酒评级越高。
 
-```{r echo=FALSE, Multivariate_Plots_volacid_alco}
+```{r echo=FALSE, Multivariate_Plots_volacid_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = volatile.acidity, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE)
@@ -415,7 +415,7 @@ grid.arrange(p1,p2,nrow=1)
 
 在酒精含量相同的情况下，挥发性酸含量越高，红酒品质评级大多越低。同样，酒精浓度越高，红酒评级越高。
 
-```{r echo=FALSE, Multivariate_Plots_density_alco}
+```{r echo=FALSE, Multivariate_Plots_density_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE)
@@ -429,7 +429,7 @@ grid.arrange(p1,p2,nrow=1)
 
 在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，其表现为所有拟合线都互相靠近，缠绕交错在一起。但酒精含量越高，却能使红酒评级提高。这不仅印证了之前在双变量探索中，酒精含量和密度存在相关性的结论，且展现了密度是酒精浓度的因变量，而酒精浓度作为自变量还有除密度外的其他内涵，所以酒精浓度能将同样密度的红酒区分开，而密度却不能将同样酒精浓度的酒区分开。
 
-```{r echo=FALSE, Multivariate_Plots_sulp_suldio}
+```{r echo=FALSE, warning=FALSE, Multivariate_Plots_sulp_suldio, fig.width=10}
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = sulphates, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
@@ -445,8 +445,8 @@ grid.arrange(p1,p2,nrow=1)
 
 绝大部分情况下，总二氧化硫含量一定时，硫酸盐添加剂含量越高，红酒品质评级越高。例外情况仅存在于红酒评级为4的样本上，但其样本数量较少，拟合结果可能与真实情况有较大差异。而硫酸添加剂含量一定时，不同总二氧化硫含量的红酒没有明显趋势性的区别。
 
-```{r echo=FALSE, Multivariate_Plots_volacid_suldio}
-ggplot(aes(x = total.sulfur.dioxide, y = volatile.acidity, color = quality), data = rw) +
+```{r echo=FALSE, warning=FALSE, Multivariate_Plots_volacid_suldio, fig.width=10}
+p1 = ggplot(aes(x = total.sulfur.dioxide, y = volatile.acidity, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_x_continuous(limits = c(0,180))
@@ -461,7 +461,7 @@ grid.arrange(p1,p2,nrow=1)
 
 除了样本量很小的、红酒评级为3、4和8的红酒样本外，在总二氧化硫含量一定时，挥发酸的含量越高，红酒评级越低；挥发酸含量一定时，总二氧化硫含量越高，评级越低。
 
-```{r echo=FALSE, Multivariate_Plots_density_suldio}
+```{r echo=FALSE, warning=FALSE, Multivariate_Plots_density_suldio, fig.width=10}
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = density, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE) + 
@@ -477,7 +477,7 @@ grid.arrange(p1,p2,nrow=1)
 
 类似于上一幅图中展现的关系，在总二氧化硫含量一定时，密度越高，绝大部分红酒评级越低。
 
-```{r echo=FALSE, Multivariate_Plots_volacid_sulp}
+```{r echo=FALSE, Multivariate_Plots_volacid_sulp, fig.width=10}
 p1 = ggplot(aes(x = sulphates, y = volatile.acidity, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE)
@@ -491,7 +491,7 @@ grid.arrange(p1,p2,nrow=1)
 
 除了样本量很小的、红酒评级为3和8的红酒样本外，在硫酸盐添加剂含量一定时，挥发性酸的含量越高，红酒评级越低；挥发性酸含量一定时，硫酸盐添加剂越多的红酒评级越高。
 
-```{r echo=FALSE, Multivariate_Plots_density_sulp}
+```{r echo=FALSE, Multivariate_Plots_density_sulp, fig.width=10}
 p1 = ggplot(aes(x = sulphates, y = density, color = quality), data = rw) +
   geom_point(alpha = 0.7) +
   geom_smooth(method = "lm", se = FALSE)
@@ -529,14 +529,18 @@ grid.arrange(p1,p2,nrow=1)
 # 定稿图与总结
 
 ### 绘图一
-```{r echo=FALSE, Plot_One}
+```{r echo=FALSE, warning=FALSE, Plot_One}
 ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) + 
   geom_point() + 
   scale_x_continuous(limits = c(0,170)) + 
+  stat_poly_eq(formula = y ~ x, 
+                aes(label = paste(..eq.label.., ..rr.label.., sep = "~~~")), 
+                parse = TRUE) +
   geom_smooth(method = 'lm', color = 'red') + 
-  xlab('总二氧化硫含量/毫克每立方分米') + 
-  ylab('游离二氧化硫含量/毫克每立方分米') +
-  ggtitle('游离二氧化硫与总二氧化硫含量的关系') 
+  xlab('总二氧化硫含量 / 毫克每立方分米') + 
+  ylab('游离二氧化硫含量 / 毫克每立方分米') +
+  ggtitle('游离二氧化硫与总二氧化硫含量的关系') +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ### 描述一
@@ -567,3 +571,4 @@ ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) +
 
 1. [【r<-高级|实战|统计】R中的方差分析ANOVA](https://www.jianshu.com/p/aa80b6f65399)
 2. [[R] plotCI](http://r.789695.n4.nabble.com/R-plotCI-td808532.html)
+3. [Adding Regression Line Equation and R2 on graph](https://stackoverflow.com/questions/7549694/adding-regression-line-equation-and-r2-on-graph)
