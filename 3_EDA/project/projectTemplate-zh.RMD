@@ -19,11 +19,12 @@ library(gplots)
 library(gridExtra)
 library(GGally)
 library(randomForest)
+library(ggpmisc)
 ```
 
 ```{r echo=FALSE, Load_the_Data}
 # 加载数据
-# setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
+setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
 
 rw <- read.csv("wineQualityReds.csv", sep = ',')
 
@@ -539,36 +540,75 @@ ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) +
   geom_smooth(method = 'lm', color = 'red') + 
   xlab('总二氧化硫含量 / 毫克每立方分米') + 
   ylab('游离二氧化硫含量 / 毫克每立方分米') +
-  ggtitle('游离二氧化硫与总二氧化硫含量的关系') +
+  ggtitle('红酒中游离二氧化硫与总二氧化硫含量的关系') +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ### 描述一
 
+红酒中的游离（自由）二氧化硫起到了杀菌防腐的作用，是一种很好的抗氧化剂。但游离二氧化硫会因为接触到氧气而变为固定二氧化硫，从而失去它的作用。所以从逻辑上来说，游离二氧化硫的含量与其总的二氧化硫含量应该存在一种成比例的关联关系。那么从图中可以看出，随着总二氧化硫含量的提高，游离二氧化硫的量也随之提高，其比例从一次线性回归的拟合结果来看，大约在五分之一略多一些。
 
 ### 绘图二
-```{r echo=FALSE, Plot_Two}
+```{r echo=FALSE, warning=FALSE, Plot_Two, fig.width=10}
+p1 = ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  xlab('酒精含量 / 体积百分比') + 
+  ylab('密度 / 克每立方厘米') + 
+  scale_colour_discrete(name = "品质评级")
 
+p2 = ggplot(aes(x = density, y = alcohol, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) +
+  xlab('密度 / 克每立方厘米') + 
+  ylab('酒精含量 / 体积百分比') + 
+  scale_colour_discrete(name = "品质评级")
+
+grid.arrange(p1,p2,nrow=1,top='红酒中酒精含量与密度对红酒品质评级的影响')
 ```
-
 ### 描述二
 
+从我们所学习的物理知识可以得知，酒精的密度低于水的密度，所以酒精与水的混合物，也就是酒，的密度会低于水的密度。换句话说，混合物中的酒精浓度是自变量，而其密度是因变量。这种因果关系在上图中也有一定的体现。左图中，在酒精含量相同的情况下，密度并不能明显区分不同的红酒品质评级，其表现为所有拟合线都缠绕交错在一起。但在右图中，当我们把横纵坐标对调后，发现酒精含量越高，却能使红酒评级提高。这也就说明了，酒精浓度作为自变量还有除密度外的其他内涵（或者说，酒精浓度出了导致密度不同之外，还会与红酒中的其他因素存在因果关系），所以酒精浓度能将同样密度的红酒区分开，而密度却不能将同样酒精浓度的酒区分开。
 
 ### 绘图三
-```{r echo=FALSE, Plot_Three}
+```{r echo=FALSE, warning=FALSE, Plot_Three, fig.width=10}
+p1 = ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  xlab('酒精含量 / 体积百分比') + 
+  ylab('硫酸盐添加剂 / 克每立方分米') + 
+  scale_colour_discrete(name = "品质评级") + 
+  scale_y_continuous(limits = c(0,1.5))
 
+p2 = ggplot(aes(x = sulphates, y = alcohol, color = quality), data = rw) +
+  geom_point(alpha = 0.7) +
+  geom_smooth(method = "lm", se = FALSE) + 
+  xlab('硫酸盐添加剂 / 克每立方分米') + 
+  ylab('酒精含量 / 体积百分比') + 
+  scale_colour_discrete(name = "品质评级") + 
+  scale_x_continuous(limits = c(0,1.5))
+
+grid.arrange(p1,p2,nrow=1,top='红酒中酒精含量与硫酸盐添加剂对红酒品质评级的影响')
 ```
 
 ### 描述三
+
+最后我们来看一看与红酒品质评级关联性最强的两个因素：酒精含量和硫酸盐添加剂是如何影响红酒评级的。从左图可以看出，在酒精含量相同的情况下，硫酸盐添加剂含量越高，红酒品质评级越高，但是每个评级的拟合线之间相互比较靠近，跨越了0.5～0.75克每立方分米的硫酸盐含量；而右图中，同样硫酸盐添加剂含量的情况下，酒精浓度越高，红酒评级越高，这次各评级的拟合线相隔较大，基本跨越了10～12%酒精浓度的范围（基本覆盖了大部分酒精分布的区间）。
 
 ------
 
 # 反思
 
-1. 可将评级分为好和差两等，或好中差三等，有利于模型训练
+在分析中碰到的最大困难是在做连续+离散型双变量探索时，如何用数值的方法印证图中的发现。后来我选择了ANOVA来印证离散变量是否能对连续变量产生区分，并用置信区间的图示来解释红酒品质评级的不同，对于某一连续变量的影响。
+
+最令我印象深刻的是酒精浓度与密度对于红酒评级的影响，其中在同样酒精浓度的情况下，密度对红酒评级缺乏区分度，但在同样密度的情况下，酒精浓度却能区分红酒评级。而在我的理解中，若两个变量互相关联，其中一个变量若能对第三个变量产生区分，那么另外一个关联的变量也应该可以区分。但从这次的分析中我发现，上述理解只存在双变量探索中，而当把这两种变量放在一起，在固定一个变量的值时，另外一个变量能否区分目标变量时，就能看出某种类似于因果关系的关联。这让我重新思考了关联性的意义。
+
+在探索中，尤其是多变量探索中，我发现红酒品质评级偏向两端的样本，因为其样本数量较少，导致了图像或拟合的结果相对其他样本量大的红酒评级来说较为混乱，缺乏规律性和可解释性。其次在模型中也发现对于样本量少的评级，模型几乎无法预测准确。若从特征工程的角度考虑，可将评级分为好和差两等，或好中差三等，这样可能会在可视化和模型准确度上有所提升。
+
 
 # 参考文献
 
 1. [【r<-高级|实战|统计】R中的方差分析ANOVA](https://www.jianshu.com/p/aa80b6f65399)
 2. [[R] plotCI](http://r.789695.n4.nabble.com/R-plotCI-td808532.html)
 3. [Adding Regression Line Equation and R2 on graph](https://stackoverflow.com/questions/7549694/adding-regression-line-equation-and-r2-on-graph)
+4. [所有关于硫的问题，回答都在这儿了](http://www.winesinfo.com/html/2016/5/145-65617.html)
