@@ -24,7 +24,8 @@ library(ggpmisc)
 
 ```{r echo=FALSE, Load_the_Data}
 # 加载数据
-setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
+# set working directory for Mac
+# setwd("/Users/yestinyang/Udacity_Data_Analyst/3_EDA/project")
 
 rw <- read.csv("wineQualityReds.csv", sep = ',')
 
