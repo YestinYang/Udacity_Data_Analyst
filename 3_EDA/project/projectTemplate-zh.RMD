@@ -396,12 +396,12 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, Multivariate_Plots_sulp_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = sulphates, y = alcohol, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
@@ -412,12 +412,12 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, Multivariate_Plots_volacid_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = volatile.acidity, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = volatile.acidity, y = alcohol, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
@@ -428,12 +428,12 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, Multivariate_Plots_density_alco, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = density, y = alcohol, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
@@ -444,13 +444,13 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, warning=FALSE, Multivariate_Plots_sulp_suldio, fig.width=10}
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = sulphates, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_x_continuous(limits = c(0,180)) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = sulphates, y = total.sulfur.dioxide, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_y_continuous(limits = c(0,180)) +
   scale_color_brewer(palette = "Blues")
@@ -462,13 +462,13 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, warning=FALSE, Multivariate_Plots_volacid_suldio, fig.width=10}
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = volatile.acidity, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_x_continuous(limits = c(0,180)) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = volatile.acidity, y = total.sulfur.dioxide, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_y_continuous(limits = c(0,180)) +
   scale_color_brewer(palette = "Blues")
@@ -480,13 +480,13 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, warning=FALSE, Multivariate_Plots_density_suldio, fig.width=10}
 p1 = ggplot(aes(x = total.sulfur.dioxide, y = density, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_x_continuous(limits = c(0,180)) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = density, y = total.sulfur.dioxide, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   scale_y_continuous(limits = c(0,180)) +
   scale_color_brewer(palette = "Blues")
@@ -498,12 +498,12 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, Multivariate_Plots_volacid_sulp, fig.width=10}
 p1 = ggplot(aes(x = sulphates, y = volatile.acidity, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = volatile.acidity, y = sulphates, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
@@ -514,12 +514,12 @@ grid.arrange(p1,p2,nrow=1)
 
 ```{r echo=FALSE, Multivariate_Plots_density_sulp, fig.width=10}
 p1 = ggplot(aes(x = sulphates, y = density, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = density, y = sulphates, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   scale_color_brewer(palette = "Blues")
 
@@ -573,7 +573,7 @@ ggplot(aes(x = total.sulfur.dioxide, y=free.sulfur.dioxide), data = rw) +
 ### 绘图二
 ```{r echo=FALSE, warning=FALSE, Plot_Two, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   xlab('酒精含量 / 体积百分比') + 
   ylab('密度 / 克每立方厘米') +
@@ -582,7 +582,7 @@ p1 = ggplot(aes(x = alcohol, y = density, color = quality), data = rw) +
 
 
 p2 = ggplot(aes(x = density, y = alcohol, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) +
   xlab('密度 / 克每立方厘米') + 
   ylab('酒精含量 / 体积百分比') +
@@ -598,7 +598,7 @@ grid.arrange(p1,p2,nrow=1,top='红酒中酒精含量与密度对红酒品质评�
 ### 绘图三
 ```{r echo=FALSE, warning=FALSE, Plot_Three, fig.width=10}
 p1 = ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   xlab('酒精含量 / 体积百分比') + 
   ylab('硫酸盐添加剂 / 克每立方分米') + 
@@ -607,7 +607,7 @@ p1 = ggplot(aes(x = alcohol, y = sulphates, color = quality), data = rw) +
   scale_color_brewer(palette = "Blues")
 
 p2 = ggplot(aes(x = sulphates, y = alcohol, color = quality), data = rw) +
-  geom_point(alpha = 0.7) +
+  geom_point(alpha = 0.2) +
   geom_smooth(method = "lm", se = FALSE) + 
   xlab('硫酸盐添加剂 / 克每立方分米') + 
   ylab('酒精含量 / 体积百分比') + 
